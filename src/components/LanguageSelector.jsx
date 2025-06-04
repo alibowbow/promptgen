@@ -37,7 +37,9 @@ export const LanguageSelector = () => {
             disabled={loading}
             className={`group relative p-4 rounded-xl border-2 transition-all duration-200 touch-target ${
               outputLanguage === lang.key
-                ? `border-${lang.color}-500 bg-${lang.color}-50 shadow-medium scale-105`
+                ? lang.key === 'en' 
+                  ? 'border-primary-500 bg-primary-50 shadow-medium scale-105'
+                  : 'border-success-500 bg-success-50 shadow-medium scale-105'
                 : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-soft hover:scale-[1.02]'
             } ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             aria-pressed={outputLanguage === lang.key}
@@ -45,7 +47,9 @@ export const LanguageSelector = () => {
           >
             {/* Selection indicator */}
             {outputLanguage === lang.key && (
-              <div className={`absolute top-2 right-2 w-4 h-4 bg-${lang.color}-500 rounded-full flex items-center justify-center`}>
+              <div className={`absolute top-2 right-2 w-4 h-4 rounded-full flex items-center justify-center ${
+                lang.key === 'en' ? 'bg-primary-500' : 'bg-success-500'
+              }`}>
                 <div className="w-2 h-2 bg-white rounded-full"></div>
               </div>
             )}
@@ -56,7 +60,7 @@ export const LanguageSelector = () => {
               <div className="flex-1 text-left">
                 <div className={`font-medium ${
                   outputLanguage === lang.key 
-                    ? `text-${lang.color}-700` 
+                    ? lang.key === 'en' ? 'text-primary-700' : 'text-success-700'
                     : 'text-slate-700 group-hover:text-slate-900'
                 }`}>
                   {lang.label}
