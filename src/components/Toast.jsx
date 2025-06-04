@@ -5,7 +5,7 @@ export const ToastContainer = () => {
   const { toasts, removeToast } = useToastStore();
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2">
+    <div className="fixed top-4 right-4 left-4 sm:left-auto sm:w-96 z-50 space-y-2 safe-area-top">
       {toasts.map((toast) => (
         <ToastItem 
           key={toast.id} 
@@ -32,18 +32,18 @@ const ToastItem = ({ toast, onRemove }) => {
   }, [toast.id]);
 
   const getToastStyles = () => {
-    const baseStyles = "transform transition-all duration-300 ease-in-out translate-x-full opacity-0";
+    const baseStyles = "transform transition-all duration-300 ease-in-out translate-x-full opacity-0 shadow-strong backdrop-blur-sm";
     
     switch (toast.type) {
       case 'success':
-        return `${baseStyles} bg-green-500 text-white border-green-600`;
+        return `${baseStyles} bg-success-500 text-white border border-success-600`;
       case 'error':
-        return `${baseStyles} bg-red-500 text-white border-red-600`;
+        return `${baseStyles} bg-error-500 text-white border border-error-600`;
       case 'warning':
-        return `${baseStyles} bg-yellow-500 text-white border-yellow-600`;
+        return `${baseStyles} bg-warning-500 text-white border border-warning-600`;
       case 'info':
       default:
-        return `${baseStyles} bg-blue-500 text-white border-blue-600`;
+        return `${baseStyles} bg-primary-500 text-white border border-primary-600`;
     }
   };
 

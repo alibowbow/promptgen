@@ -5,32 +5,84 @@ export const LanguageSelector = () => {
   const { outputLanguage, setOutputLanguage } = useConfigStore();
   const { loading } = useInputStore();
 
+  const languages = [
+    {
+      key: 'en',
+      label: '영어로 변환',
+      icon: '🌐',
+      description: 'Convert to English',
+      color: 'primary'
+    },
+    {
+      key: 'ko', 
+      label: '한국어로 최적화',
+      icon: '🇰🇷',
+      description: 'Optimize in Korean',
+      color: 'success'
+    }
+  ];
+
   return (
-    <div className="flex gap-2 mb-4 justify-center">
-      <button
-        onClick={() => setOutputLanguage("en")}
-        disabled={loading}
-        type="button"
-        className={`px-4 py-2 rounded-full font-semibold border text-sm transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-400 ${
-          outputLanguage === "en"
-            ? "bg-purple-600 text-white border-purple-600 shadow-md scale-105"
-            : "bg-slate-100 text-purple-700 border-slate-200 hover:bg-purple-50 hover:border-purple-300"
-        }`}
-      >
-        ➡️ 영어로 변환
-      </button>
-      <button
-        onClick={() => setOutputLanguage("ko")}
-        disabled={loading}
-        type="button"
-        className={`px-4 py-2 rounded-full font-semibold border text-sm transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-teal-400 ${
-          outputLanguage === "ko"
-            ? "bg-teal-500 text-white border-teal-500 shadow-md scale-105"
-            : "bg-slate-100 text-teal-700 border-slate-200 hover:bg-teal-50 hover:border-teal-300"
-        }`}
-      >
-        🇰🇷 한국어로 최적화
-      </button>
+    <div className="card-body">
+      <div className="mb-4">
+        <h3 className="heading-4 mb-2">출력 언어 선택</h3>
+        <p className="caption">프롬프트를 변환할 언어를 선택하세요</p>
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {languages.map((lang) => (
+          <button
+            key={lang.key}
+            onClick={() => setOutputLanguage(lang.key)}
+            disabled={loading}
+            className={`group relative p-4 rounded-xl border-2 transition-all duration-200 touch-target ${
+              outputLanguage === lang.key
+                ? `border-${lang.color}-500 bg-${lang.color}-50 shadow-medium scale-105`
+                : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-soft hover:scale-[1.02]'
+            } ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+            aria-pressed={outputLanguage === lang.key}
+            aria-label={`언어를 ${lang.label}로 설정`}
+          >
+            {/* Selection indicator */}
+            {outputLanguage === lang.key && (
+              <div className={`absolute top-2 right-2 w-4 h-4 bg-${lang.color}-500 rounded-full flex items-center justify-center`}>
+                <div className="w-2 h-2 bg-white rounded-full"></div>
+              </div>
+            )}
+            
+            {/* Content */}
+            <div className="flex items-center gap-3">
+              <div className="text-2xl">{lang.icon}</div>
+              <div className="flex-1 text-left">
+                <div className={`font-medium ${
+                  outputLanguage === lang.key 
+                    ? `text-${lang.color}-700` 
+                    : 'text-slate-700 group-hover:text-slate-900'
+                }`}>
+                  {lang.label}
+                </div>
+                <div className="caption mt-1">
+                  {lang.description}
+                </div>
+              </div>
+            </div>
+            
+            {/* Loading indicator */}
+            {loading && outputLanguage === lang.key && (
+              <div className="absolute inset-0 bg-white/80 rounded-xl flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+      
+      {/* Additional info */}
+      <div className="mt-4 p-3 bg-slate-50 rounded-xl">
+        <p className="caption text-slate-600">
+          💡 <strong>팁:</strong> 영어 변환은 글로벌 AI 모델에 적합하고, 한국어 최적화는 로컬 컨텍스트에 더 적합합니다.
+        </p>
+      </div>
     </div>
   );
 };
