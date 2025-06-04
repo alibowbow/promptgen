@@ -1,142 +1,101 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Header,
   LanguageSelector,
   CategorySelector,
   StyleOptions,
   HistoryPanel,
-  PresetManager,
-  ExperimentalFeatures,
   InputForm,
   StatusDisplay,
   ResultViewer,
-  ToastContainer
+  ToastContainer,
+  FloatingDrawer,
+  DarkModeToggle
 } from './components';
 
 export default function App() {
+  const [darkMode, setDarkMode] = useState(false);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary-50 font-sans">
-      {/* Mobile-first responsive container */}
-      <div className="w-full min-h-screen flex flex-col lg:flex-row lg:items-start lg:justify-center">
+    <div className={`min-h-screen transition-all duration-500 ${darkMode ? 'dark' : ''}`}>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-950 font-sans">
         
-        {/* Main Content Area */}
-        <main className="flex-1 max-w-none lg:max-w-2xl xl:max-w-3xl mx-auto">
-          <div className="px-4 py-6 sm:px-6 lg:px-8 lg:py-12 space-y-6">
+        {/* Dark Mode Toggle */}
+        <DarkModeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+        
+        {/* Main Container - Desktop Optimized */}
+        <div className="container mx-auto px-6 py-10">
+          <div className="max-w-7xl mx-auto">
             
             {/* Header Section */}
-            <div className="text-center space-y-4 animate-fade-in">
+            <div className="text-center mb-12 animate-fade-in">
               <Header />
-              <div className="body-text max-w-2xl mx-auto">
-                아이디어나 주요 내용을 입력하고, 원하는 용도와 언어에 맞게 최적화된 프롬프트를 받아보세요.
-                <br className="hidden sm:block" />
-                <span className="caption block sm:inline mt-2 sm:mt-0 sm:ml-2">
-                  * 민감한 정보는 입력하지 마세요.
+              <p className="text-xl text-slate-600 dark:text-slate-300 mt-6 max-w-3xl mx-auto leading-relaxed">
+                AI 모델에 최적화된 프롬프트를 생성하여 더 나은 결과를 얻어보세요.
+                <br />
+                <span className="text-base text-slate-500 dark:text-slate-400">
+                  이미지, 비디오, 문서, 코드 생성을 위한 전문적인 프롬프트 최적화 도구
                 </span>
-              </div>
+              </p>
             </div>
 
-            {/* Controls Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+            {/* Main Grid Layout */}
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
               
-              {/* Left Column - Primary Controls */}
-              <div className="space-y-4">
-                <div className="panel-expandable">
-                  <LanguageSelector />
+              {/* Left Column - Controls */}
+              <div className="xl:col-span-4 space-y-6">
+                {/* Language & Category Selection */}
+                <div className="glass-card">
+                  <div className="glass-card-body space-y-8">
+                    <LanguageSelector />
+                    <CategorySelector />
+                  </div>
                 </div>
                 
-                <div className="panel-expandable">
-                  <CategorySelector />
-                </div>
-                
-                <div className="panel-expandable">
+                {/* Style Options */}
+                <div className="glass-card">
                   <StyleOptions />
                 </div>
               </div>
               
-              {/* Right Column - Secondary Controls */}
-              <div className="space-y-4">
-                <div className="panel-expandable">
-                  <HistoryPanel />
+              {/* Center Column - Main Input/Output */}
+              <div className="xl:col-span-8 space-y-6">
+                {/* Input Form */}
+                <div className="glass-card">
+                  <InputForm />
                 </div>
-                
-                <div className="panel-expandable">
-                  <PresetManager />
-                </div>
-                
-                <div className="panel-expandable">
-                  <ExperimentalFeatures />
-                </div>
+
+                {/* Status & Results */}
+                <StatusDisplay />
+                <ResultViewer />
               </div>
             </div>
 
-            {/* Input Section */}
-            <div className="panel-expandable">
-              <InputForm />
-            </div>
-
-            {/* Status & Results */}
-            <div className="space-y-4">
-              <StatusDisplay />
-              <ResultViewer />
+            {/* History Panel - Full Width Below */}
+            <div className="mt-8">
+              <HistoryPanel />
             </div>
 
             {/* Footer */}
-            <footer className="text-center pt-8 border-t border-slate-200">
-              <p className="caption">
-                Made with <span className="text-error-400">♥</span> for AI Enthusiasts
-              </p>
-              <p className="caption mt-2">
-                © 2024 Prompt Optimizer - Powered by Advanced AI
-              </p>
+            <footer className="mt-16 text-center border-t border-slate-200/50 dark:border-slate-700/50 pt-8">
+              <div className="space-y-2">
+                <p className="text-slate-600 dark:text-slate-400">
+                  Made with <span className="text-red-500">♥</span> for AI Enthusiasts
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-500">
+                  © 2024 AI Prompt Optimizer - Powered by Advanced AI Technology
+                </p>
+              </div>
             </footer>
           </div>
-        </main>
+        </div>
 
-        {/* Optional Sidebar for larger screens */}
-        <aside className="hidden xl:block w-80 bg-white/60 backdrop-blur-sm border-l border-white/20 min-h-screen">
-          <div className="sticky top-6 p-6 space-y-6">
-            
-            {/* Quick Stats */}
-            <div className="card">
-              <div className="card-header">
-                <h3 className="heading-4">사용 통계</h3>
-              </div>
-              <div className="card-body space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="caption">총 변환 횟수</span>
-                  <span className="label">-</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="caption">저장된 프리셋</span>
-                  <span className="label">-</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="caption">히스토리</span>
-                  <span className="label">-</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Tips */}
-            <div className="card">
-              <div className="card-header">
-                <h3 className="heading-4">💡 팁</h3>
-              </div>
-              <div className="card-body">
-                <ul className="space-y-2 caption">
-                  <li>• 구체적인 스타일과 색상을 명시하세요</li>
-                  <li>• 원하는 분위기나 감정을 포함하세요</li>
-                  <li>• 기술적 세부사항을 추가하세요</li>
-                  <li>• 프리셋으로 자주 쓰는 설정을 저장하세요</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </aside>
+        {/* Floating Drawer for Presets & Export */}
+        <FloatingDrawer />
+        
+        {/* Toast Notifications */}
+        <ToastContainer />
       </div>
-
-      {/* Toast Notifications */}
-      <ToastContainer />
     </div>
   );
 }

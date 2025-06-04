@@ -10,3 +10,5 @@ export { StatusDisplay } from './StatusDisplay.jsx';
 export { ResultViewer } from './ResultViewer.jsx';
 export { ToastContainer } from './Toast.jsx';
 export { ExportImport } from './ExportImport.jsx';
+export { DarkModeToggle } from './DarkModeToggle.jsx';
+export { FloatingDrawer } from './FloatingDrawer.jsx';
