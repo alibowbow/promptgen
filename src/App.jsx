@@ -49,13 +49,6 @@ export default function App() {
             {/* Header Section */}
             <div className="text-center mb-12 animate-fade-in">
               <Header />
-              <p className="text-xl text-slate-600 dark:text-slate-300 mt-6 max-w-3xl mx-auto leading-relaxed">
-                AI 모델에 최적화된 프롬프트를 생성하여 더 나은 결과를 얻어보세요.
-                <br />
-                <span className="text-base text-slate-500 dark:text-slate-400">
-                  이미지, 비디오, 문서, 코드 생성을 위한 전문적인 프롬프트 최적화 도구
-                </span>
-              </p>
             </div>
 
             {/* History Panel - Right below header when visible */}

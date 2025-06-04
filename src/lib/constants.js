@@ -35,6 +35,30 @@ export const CATEGORIES = [
   },
 ];
 
+// Category-specific prompt examples
+export const PROMPT_EXAMPLES = {
+  image: [
+    "아름다운 일몰이 보이는 산 정상의 풍경",
+    "미래적인 도시의 네온사인과 비 오는 밤",
+    "고양이가 책을 읽고 있는 아늑한 도서관"
+  ],
+  video: [
+    "카메라가 숲속을 천천히 이동하며 햇빛이 나뭇잎 사이로 스며드는 장면",
+    "도시의 아침 출근길 타임랩스 영상",
+    "바다 위에서 돌고래들이 뛰어노는 모습"
+  ],
+  document: [
+    "효과적인 프레젠테이션 방법에 대해 설명해줘",
+    "Python을 처음 배우는 사람을 위한 학습 로드맵을 만들어줘",
+    "친환경 생활 습관 10가지를 정리해줘"
+  ],
+  code: [
+    "React에서 useState를 사용한 간단한 카운터 컴포넌트를 만들어줘",
+    "Python으로 CSV 파일을 읽고 데이터를 분석하는 코드",
+    "JavaScript로 배열에서 중복값을 제거하는 함수"
+  ]
+};
+
 // Minimal category-specific style options
 export const STYLE_OPTIONS_BY_CATEGORY = {
   image: {

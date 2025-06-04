@@ -23,7 +23,7 @@ export const LanguageSelector = () => {
           <button
             onClick={() => setOutputLanguage("en")}
             disabled={loading}
-            className={`px-4 py-3 rounded-lg font-medium text-sm transition-all duration-300 ${
+            className={`px-3 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
               outputLanguage === "en"
                 ? 'text-white'
                 : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100'

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useInputStore } from '../stores/inputStore.js';
 import { useConfigStore } from '../stores/configStore.js';
 import { usePromptConverter } from '../hooks/usePromptConverter.js';
-import { CATEGORIES } from '../lib/constants.js';
+import { CATEGORIES, PROMPT_EXAMPLES } from '../lib/constants.js';
 
 export const InputForm = () => {
   const { input, setInput, loading } = useInputStore();
@@ -12,6 +12,7 @@ export const InputForm = () => {
   const [isFocused, setIsFocused] = useState(false);
 
   const selectedCat = CATEGORIES.find((c) => c.key === category);
+  const categoryExamples = PROMPT_EXAMPLES[category] || [];
   
   const mainButtonText = outputLanguage === 'en' ? 
     `${selectedCat?.label || "선택"}용 영문 프롬프트 생성` : 
@@ -20,9 +21,7 @@ export const InputForm = () => {
   const placeholderText = `${selectedCat?.label || '프로젝트'}에 대한 아이디어를 자세히 설명해주세요...
 
 예시:
-• 미래적인 도시 풍경, 네온사인과 홀로그램이 있는 밤 장면
-• 평화로운 숲속 오두막, 따뜻한 황금빛과 자연스러운 조명
-• 혁신적인 제품 디자인, 미니멀하고 현대적인 스타일
+${categoryExamples.map(example => `• ${example}`).join('\n')}
 
 구체적이고 상세할수록 더 좋은 결과를 얻을 수 있습니다.`;
 
@@ -161,14 +160,11 @@ export const InputForm = () => {
             <button
               type="button"
               onClick={() => {
-                const examples = [
-                  "미래적인 도시 풍경, 네온사인이 빛나는 밤 하늘, 사이버펑크 스타일, 4K 고화질",
-                  "평화로운 숲속 오두막, 따뜻한 황금빛 햇살이 스며드는 아침, 자연스러운 조명",
-                  "혁신적인 스마트폰 디자인, 미니멀한 인터페이스, 홀로그램 디스플레이, 투명한 소재"
-                ];
-                const randomExample = examples[Math.floor(Math.random() * examples.length)];
-                setInput(randomExample);
-                setCharCount(randomExample.length);
+                const randomExample = categoryExamples[Math.floor(Math.random() * categoryExamples.length)];
+                if (randomExample) {
+                  setInput(randomExample);
+                  setCharCount(randomExample.length);
+                }
               }}
               className="btn btn-secondary btn-sm flex-1"
             >
