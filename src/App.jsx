@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Header,
   LanguageSelector,
@@ -12,12 +12,31 @@ import {
   FloatingDrawer,
   DarkModeToggle
 } from './components';
+import { useHistoryStore } from './stores/historyStore.js';
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  const { showHistory } = useHistoryStore();
+  const [darkMode, setDarkMode] = useState(() => {
+    // Check localStorage or system preference
+    const saved = localStorage.getItem('darkMode');
+    if (saved !== null) return JSON.parse(saved);
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  useEffect(() => {
+    // Save to localStorage
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+    
+    // Apply to document
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   return (
-    <div className={`min-h-screen transition-all duration-500 ${darkMode ? 'dark' : ''}`}>
+    <div className="min-h-screen transition-all duration-500">
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-950 font-sans">
         
         {/* Dark Mode Toggle */}
@@ -38,6 +57,13 @@ export default function App() {
                 </span>
               </p>
             </div>
+
+            {/* History Panel - Right below header when visible */}
+            {showHistory && (
+              <div className="mb-8 animate-slide-up">
+                <HistoryPanel />
+              </div>
+            )}
 
             {/* Main Grid Layout */}
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
@@ -69,11 +95,6 @@ export default function App() {
                 <StatusDisplay />
                 <ResultViewer />
               </div>
-            </div>
-
-            {/* History Panel - Full Width Below */}
-            <div className="mt-8">
-              <HistoryPanel />
             </div>
 
             {/* Footer */}

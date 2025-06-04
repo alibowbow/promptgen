@@ -10,7 +10,7 @@ export const FloatingDrawer = () => {
   const tabs = [
     { key: 'presets', label: '프리셋', icon: '📁' },
     { key: 'export', label: '내보내기', icon: '📤' },
-    { key: 'experimental', label: '실험', icon: '🧪' }
+    { key: 'laboratory', label: '실험실', icon: '🧪' }
   ];
 
   return (
@@ -89,7 +89,7 @@ export const FloatingDrawer = () => {
                 </div>
               )}
               
-              {activeTab === 'experimental' && (
+              {activeTab === 'laboratory' && (
                 <div className="space-y-4">
                   <ExperimentalFeatures />
                 </div>

@@ -35,6 +35,45 @@ export const CATEGORIES = [
   },
 ];
 
+// Minimal category-specific style options
+export const STYLE_OPTIONS_BY_CATEGORY = {
+  image: {
+    style: [
+      { key: "realistic", label: "사실적", emoji: "📸" },
+      { key: "artistic", label: "예술적", emoji: "🎨" },
+      { key: "animation", label: "애니메이션", emoji: "🎬" }
+    ]
+  },
+  video: {
+    style: [
+      { key: "cinematic", label: "영화적", emoji: "🎬" },
+      { key: "documentary", label: "다큐멘터리", emoji: "📹" }
+    ]
+  },
+  document: {
+    tone: [
+      { key: "professional", label: "전문적", emoji: "💼" },
+      { key: "friendly", label: "친근한", emoji: "😊" },
+      { key: "academic", label: "학술적", emoji: "🎓" }
+    ],
+    length: [
+      { key: "short", label: "짧게", emoji: "📝" },
+      { key: "long", label: "상세하게", emoji: "📋" }
+    ]
+  },
+  code: {
+    style: [
+      { key: "clean", label: "깔끔한", emoji: "✨" },
+      { key: "commented", label: "주석포함", emoji: "💬" }
+    ],
+    complexity: [
+      { key: "simple", label: "간단", emoji: "🔰" },
+      { key: "advanced", label: "고급", emoji: "🚀" }
+    ]
+  }
+};
+
+// Legacy options for backward compatibility
 export const TONE_OPTIONS = [
   { key: "professional", label: "전문적" },
   { key: "friendly", label: "친근한" },

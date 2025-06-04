@@ -6,7 +6,6 @@ import { useToastStore } from '../stores/toastStore.js';
 import { PromptAnalyzer } from '../lib/promptAnalyzer.js';
 
 export const ExperimentalFeatures = () => {
-  const [showPanel, setShowPanel] = useState(false);
   const [activeFeature, setActiveFeature] = useState('quality');
   const [analysis, setAnalysis] = useState(null);
   const [keywords, setKeywords] = useState([]);
@@ -102,54 +101,54 @@ export const ExperimentalFeatures = () => {
     return '개선 필요';
   };
 
-  if (!showPanel) {
-    return (
-      <button
-        onClick={() => setShowPanel(true)}
-        className="px-3 py-2 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-colors text-sm font-medium"
-      >
-        🧪 실험 기능
-      </button>
-    );
-  }
-
   return (
-    <div className="mb-4 p-4 bg-amber-50 rounded-xl border border-amber-200">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-amber-800">🧪 실험적 기능</h3>
-        <button
-          onClick={() => setShowPanel(false)}
-          className="text-amber-600 hover:text-amber-800 text-sm"
-        >
-          ✕
-        </button>
+    <div className="space-y-4">
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+          🧪 실험실
+        </h3>
+        <p className="text-sm text-slate-600 dark:text-slate-300">
+          프롬프트 품질 분석 및 최적화 도구
+        </p>
       </div>
 
       {/* Feature Buttons */}
-      <div className="grid grid-cols-2 gap-2 mb-4">
+      <div className="grid grid-cols-2 gap-3">
         <button
           onClick={analyzeQuality}
-          className="p-2 bg-white rounded-lg border border-amber-200 hover:border-amber-300 text-sm text-amber-700 transition-colors"
+          className="group px-4 py-3 bg-white/80 dark:bg-slate-700/50 rounded-xl border border-slate-200/50 dark:border-slate-600/50 hover:bg-gradient-to-r hover:from-amber-100 hover:to-orange-100 dark:hover:from-amber-900/20 dark:hover:to-orange-900/20 hover:scale-105 transition-all duration-300"
         >
-          📊 품질 분석
+          <div className="flex items-center gap-2">
+            <span className="text-lg">📊</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">품질 분석</span>
+          </div>
         </button>
         <button
           onClick={generateSimilarPrompts}
-          className="p-2 bg-white rounded-lg border border-amber-200 hover:border-amber-300 text-sm text-amber-700 transition-colors"
+          className="group px-4 py-3 bg-white/80 dark:bg-slate-700/50 rounded-xl border border-slate-200/50 dark:border-slate-600/50 hover:bg-gradient-to-r hover:from-blue-100 hover:to-cyan-100 dark:hover:from-blue-900/20 dark:hover:to-cyan-900/20 hover:scale-105 transition-all duration-300"
         >
-          🔄 유사 추천
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🔄</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">유사 추천</span>
+          </div>
         </button>
         <button
           onClick={compressPrompt}
-          className="p-2 bg-white rounded-lg border border-amber-200 hover:border-amber-300 text-sm text-amber-700 transition-colors"
+          className="group px-4 py-3 bg-white/80 dark:bg-slate-700/50 rounded-xl border border-slate-200/50 dark:border-slate-600/50 hover:bg-gradient-to-r hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-900/20 dark:hover:to-pink-900/20 hover:scale-105 transition-all duration-300"
         >
-          📉 압축하기
+          <div className="flex items-center gap-2">
+            <span className="text-lg">📉</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">압축하기</span>
+          </div>
         </button>
         <button
           onClick={expandPrompt}
-          className="p-2 bg-white rounded-lg border border-amber-200 hover:border-amber-300 text-sm text-amber-700 transition-colors"
+          className="group px-4 py-3 bg-white/80 dark:bg-slate-700/50 rounded-xl border border-slate-200/50 dark:border-slate-600/50 hover:bg-gradient-to-r hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/20 dark:hover:to-emerald-900/20 hover:scale-105 transition-all duration-300"
         >
-          📈 확장하기
+          <div className="flex items-center gap-2">
+            <span className="text-lg">📈</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">확장하기</span>
+          </div>
         </button>
       </div>
 
