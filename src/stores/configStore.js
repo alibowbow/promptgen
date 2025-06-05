@@ -10,8 +10,9 @@ export const useConfigStore = create(
       
       // Style preferences
       tone: 'professional',
-      length: 'medium', 
+      length: 'medium',
       format: 'sentence',
+      styleMode: 'basic',
       
       // UI state
       showStyleOptions: false,
@@ -22,6 +23,7 @@ export const useConfigStore = create(
       setTone: (tone) => set({ tone }),
       setLength: (length) => set({ length }),
       setFormat: (format) => set({ format }),
+      setStyleMode: (styleMode) => set({ styleMode }),
       setShowStyleOptions: (show) => set({ showStyleOptions: show }),
       
       // Get current config as object
@@ -32,7 +34,8 @@ export const useConfigStore = create(
           outputLanguage: state.outputLanguage,
           tone: state.tone,
           length: state.length,
-          format: state.format
+          format: state.format,
+          styleMode: state.styleMode
         };
       },
       
@@ -42,7 +45,8 @@ export const useConfigStore = create(
         outputLanguage: config.outputLanguage,
         tone: config.tone,
         length: config.length,
-        format: config.format
+        format: config.format,
+        styleMode: config.styleMode || 'basic'
       })
     }),
     {
@@ -52,7 +56,8 @@ export const useConfigStore = create(
         outputLanguage: state.outputLanguage,
         tone: state.tone,
         length: state.length,
-        format: state.format
+        format: state.format,
+        styleMode: state.styleMode
       })
     }
   )

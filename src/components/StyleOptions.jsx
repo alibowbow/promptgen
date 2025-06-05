@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { useConfigStore } from '../stores/configStore.js';
-import { STYLE_OPTIONS_BY_CATEGORY } from '../lib/constants.js';
+import { STYLE_OPTIONS_BY_CATEGORY, PREMIUM_STYLE_TREES } from '../lib/constants.js';
 
 export const StyleOptions = () => {
-  const { category } = useConfigStore();
+  const { category, styleMode, setStyleMode } = useConfigStore();
   const [selectedOptions, setSelectedOptions] = useState({});
   const [isExpanded, setIsExpanded] = useState(false);
 
   const categoryOptions = STYLE_OPTIONS_BY_CATEGORY[category] || {};
+  const premiumTree = PREMIUM_STYLE_TREES[category] || [];
+  const [premiumSelected, setPremiumSelected] = useState([]);
 
   const handleOptionSelect = (groupKey, value) => {
     setSelectedOptions(prev => ({
@@ -15,6 +17,35 @@ export const StyleOptions = () => {
       [groupKey]: prev[groupKey] === value ? null : value // Allow deselection
     }));
   };
+
+  const togglePremium = (value) => {
+    setPremiumSelected((prev) =>
+      prev.includes(value)
+        ? prev.filter((v) => v !== value)
+        : [...prev, value]
+    );
+  };
+
+  const renderPremiumTree = (nodes, depth = 0) => (
+    <ul className="space-y-1" style={{ marginLeft: depth * 16 }}>
+      {nodes.map((node) => (
+        <li key={node.key}>
+          <button
+            type="button"
+            onClick={() => node.children ? null : togglePremium(node.key)}
+            className={`text-left w-full px-2 py-1 rounded transition-colors ${
+              premiumSelected.includes(node.key)
+                ? 'bg-indigo-500/20 dark:bg-indigo-800/30'
+                : 'hover:bg-slate-100 dark:hover:bg-slate-700/50'
+            }`}
+          >
+            {node.label}
+          </button>
+          {node.children && renderPremiumTree(node.children, depth + 1)}
+        </li>
+      ))}
+    </ul>
+  );
 
   const renderOptionGroup = (groupKey, options) => {
     if (!options || options.length === 0) return null;
@@ -54,7 +85,8 @@ export const StyleOptions = () => {
     );
   };
 
-  const selectedCount = Object.values(selectedOptions).filter(v => v).length;
+  const selectedCount =
+    Object.values(selectedOptions).filter(v => v).length + premiumSelected.length;
 
   return (
     <div className="glass-card">
@@ -78,13 +110,35 @@ export const StyleOptions = () => {
         </span>
       </div>
 
-      {isExpanded && (
-        <div className="border-t border-white/20 dark:border-slate-700/30 p-4">
-          <div className="space-y-6">
-            {Object.entries(categoryOptions).map(([groupKey, options]) => 
-              renderOptionGroup(groupKey, options)
+        {isExpanded && (
+          <div className="border-t border-white/20 dark:border-slate-700/30 p-4">
+            <div className="flex justify-end mb-4 gap-2">
+              <button
+                type="button"
+                onClick={() => setStyleMode('basic')}
+                className={`px-3 py-1 rounded text-sm border ${styleMode === 'basic' ? 'bg-indigo-500 text-white' : 'bg-white dark:bg-slate-700'}`}
+              >
+                Basic
+              </button>
+              <button
+                type="button"
+                onClick={() => setStyleMode('premium')}
+                className={`px-3 py-1 rounded text-sm border ${styleMode === 'premium' ? 'bg-indigo-500 text-white' : 'bg-white dark:bg-slate-700'}`}
+              >
+                Premium
+              </button>
+            </div>
+            {styleMode === 'basic' ? (
+              <div className="space-y-6">
+                {Object.entries(categoryOptions).map(([groupKey, options]) =>
+                  renderOptionGroup(groupKey, options)
+                )}
+              </div>
+            ) : (
+              <div className="max-h-72 overflow-y-auto pr-2">
+                {renderPremiumTree(premiumTree)}
+              </div>
             )}
-          </div>
 
           {/* No options selected hint */}
           {Object.keys(categoryOptions).length > 0 && Object.values(selectedOptions).every(v => !v) && (
