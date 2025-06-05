@@ -1,7 +1,30 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { Config } from './configStore';
 
-export const useHistoryStore = create(
+export interface HistoryItem {
+  id: number;
+  timestamp: string;
+  input: string;
+  output: string;
+  category: string;
+  outputLanguage: string;
+  tone: string;
+  length: string;
+  format: string;
+}
+
+export interface HistoryState {
+  history: HistoryItem[];
+  showHistory: boolean;
+  setShowHistory: (show: boolean) => void;
+  addToHistory: (inputText: string, outputText: string, config: Config) => void;
+  removeFromHistory: (id: number) => void;
+  clearHistory: () => void;
+  getHistoryItem: (id: number) => HistoryItem | undefined;
+}
+
+export const useHistoryStore = create<HistoryState>()(
   persist(
     (set, get) => ({
       // History state
@@ -9,10 +32,10 @@ export const useHistoryStore = create(
       showHistory: false,
       
       // Actions
-      setShowHistory: (show) => set({ showHistory: show }),
+      setShowHistory: (show: boolean) => set({ showHistory: show }),
       
       // Add item to history
-      addToHistory: (inputText, outputText, config) => {
+      addToHistory: (inputText: string, outputText: string, config: Config) => {
         const historyItem = {
           id: Date.now(),
           timestamp: new Date().toISOString(),
@@ -32,7 +55,7 @@ export const useHistoryStore = create(
       },
       
       // Remove item from history
-      removeFromHistory: (id) => {
+      removeFromHistory: (id: number) => {
         const currentHistory = get().history;
         const newHistory = currentHistory.filter(item => item.id !== id);
         set({ history: newHistory });
@@ -42,7 +65,7 @@ export const useHistoryStore = create(
       clearHistory: () => set({ history: [] }),
       
       // Get history item by id
-      getHistoryItem: (id) => {
+      getHistoryItem: (id: number) => {
         const history = get().history;
         return history.find(item => item.id === id);
       }

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { usePresetStore } from '../stores/presetStore.js';
-import { useHistoryStore } from '../stores/historyStore.js';
-import { useResultStore } from '../stores/resultStore.js';
-import { useToastStore } from '../stores/toastStore.js';
-import { FileIO } from '../lib/fileIO.js';
+import { usePresetStore } from '../stores/presetStore';
+import { useHistoryStore } from '../stores/historyStore';
+import { useResultStore } from '../stores/resultStore';
+import { useToastStore } from '../stores/toastStore';
+import { FileIO } from '../lib/fileIO';
 
 export const ExportImport = () => {
   const [showModal, setShowModal] = useState(false);

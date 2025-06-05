@@ -1,8 +1,17 @@
 // Prompt analysis and quality evaluation utilities
+export interface PromptAnalysis {
+  clarity: number;
+  specificity: number;
+  length: number;
+  structure: number;
+  creativity: number;
+  overall: number;
+}
+
 export class PromptAnalyzer {
   
   // Analyze prompt quality
-  static analyzeQuality(text) {
+  static analyzeQuality(text: string): PromptAnalysis | null {
     if (!text || typeof text !== 'string') {
       return null;
     }
@@ -29,7 +38,7 @@ export class PromptAnalyzer {
   }
 
   // Calculate clarity score (0-5)
-  static calculateClarity(text) {
+  static calculateClarity(text: string): number {
     let score = 3.0; // base score
     
     // Penalize overly complex sentences
@@ -58,7 +67,7 @@ export class PromptAnalyzer {
   }
 
   // Calculate specificity score (0-5)
-  static calculateSpecificity(text) {
+  static calculateSpecificity(text: string): number {
     let score = 2.0; // base score
     
     // Count descriptive adjectives and specific terms
@@ -82,7 +91,7 @@ export class PromptAnalyzer {
   }
 
   // Calculate length appropriateness (0-5)
-  static calculateLengthScore(text) {
+  static calculateLengthScore(text: string): number {
     const wordCount = text.trim().split(/\s+/).length;
     
     if (wordCount < 5) return 2.0; // too short
@@ -93,7 +102,7 @@ export class PromptAnalyzer {
   }
 
   // Calculate structure score (0-5)
-  static calculateStructure(text) {
+  static calculateStructure(text: string): number {
     let score = 3.0; // base score
     
     // Check for proper sentence structure
@@ -117,7 +126,7 @@ export class PromptAnalyzer {
   }
 
   // Calculate creativity score (0-5)
-  static calculateCreativity(text) {
+  static calculateCreativity(text: string): number {
     let score = 3.0; // base score
     
     // Count artistic/creative terms
@@ -142,7 +151,7 @@ export class PromptAnalyzer {
   }
 
   // Extract keywords from text
-  static extractKeywords(text, limit = 10) {
+  static extractKeywords(text: string, limit = 10): { word: string; count: number }[] {
     if (!text) return [];
     
     // Remove common stop words
@@ -171,7 +180,7 @@ export class PromptAnalyzer {
   }
 
   // Suggest improvements
-  static suggestImprovements(text, analysis) {
+  static suggestImprovements(text: string, analysis: PromptAnalysis): { type: string; message: string }[] {
     const suggestions = [];
 
     if (analysis.clarity < 3.5) {
@@ -214,7 +223,7 @@ export class PromptAnalyzer {
   }
 
   // Compress prompt (remove unnecessary words)
-  static compressPrompt(text) {
+  static compressPrompt(text: string): string {
     if (!text) return text;
 
     return text
@@ -231,7 +240,7 @@ export class PromptAnalyzer {
   }
 
   // Expand prompt (add helpful details)
-  static expandPrompt(text, category = 'image') {
+  static expandPrompt(text: string, category: string = 'image'): string {
     if (!text) return text;
 
     const expansions = {

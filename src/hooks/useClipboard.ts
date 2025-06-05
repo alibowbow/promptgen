@@ -3,7 +3,7 @@ import { useState } from 'react';
 export const useClipboard = () => {
   const [copied, setCopied] = useState(false);
 
-  const copyToClipboard = async (text) => {
+  const copyToClipboard = async (text: string) => {
     if (!text) {
       console.log("[DEBUG] 복사할 내용이 없습니다.");
       return;

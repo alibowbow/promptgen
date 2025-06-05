@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useToastStore } from '../stores/toastStore.js';
+import { useToastStore } from '../stores/toastStore';
 
 export const ToastContainer = () => {
   const { toasts, removeToast } = useToastStore();

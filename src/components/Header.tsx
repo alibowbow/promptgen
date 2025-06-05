@@ -1,4 +1,4 @@
-import { useHistoryStore } from '../stores/historyStore.js';
+import { useHistoryStore } from '../stores/historyStore';
 
 export const Header = () => {
   const { history, showHistory, setShowHistory } = useHistoryStore();

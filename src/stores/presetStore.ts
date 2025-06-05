@@ -1,7 +1,39 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { Config } from './configStore';
 
-export const usePresetStore = create(
+export interface Preset {
+  id: number;
+  name: string;
+  timestamp: string;
+  config: Config;
+  inputText: string;
+  outputText: string;
+  isFavorite: boolean;
+}
+
+export interface PresetExport {
+  presets: Preset[];
+  favorites: number[];
+  exportedAt: string;
+  version: string;
+}
+
+export interface PresetState {
+  presets: Preset[];
+  favorites: number[];
+  savePreset: (name: string, config: Config, inputText?: string, outputText?: string) => number;
+  loadPreset: (id: number) => Preset | undefined;
+  deletePreset: (id: number) => void;
+  toggleFavorite: (id: number) => void;
+  getFavoritePresets: () => Preset[];
+  updatePresetName: (id: number, newName: string) => void;
+  exportPresets: () => PresetExport;
+  importPresets: (data: any) => boolean;
+  clearPresets: () => void;
+}
+
+export const usePresetStore = create<PresetState>()(
   persist(
     (set, get) => ({
       // Presets state
@@ -10,7 +42,7 @@ export const usePresetStore = create(
       
       // Actions
       // Save current config as a preset
-      savePreset: (name, config, inputText = '', outputText = '') => {
+      savePreset: (name: string, config: Config, inputText = '', outputText = ''): number => {
         const preset = {
           id: Date.now(),
           name,
@@ -29,13 +61,13 @@ export const usePresetStore = create(
       },
       
       // Load preset configuration
-      loadPreset: (id) => {
+      loadPreset: (id: number) => {
         const presets = get().presets;
         return presets.find(preset => preset.id === id);
       },
       
       // Delete preset
-      deletePreset: (id) => {
+      deletePreset: (id: number) => {
         const currentPresets = get().presets;
         const newPresets = currentPresets.filter(preset => preset.id !== id);
         
@@ -49,7 +81,7 @@ export const usePresetStore = create(
       },
       
       // Toggle favorite
-      toggleFavorite: (id) => {
+      toggleFavorite: (id: number) => {
         const currentFavorites = get().favorites;
         const isFavorite = currentFavorites.includes(id);
         
@@ -78,7 +110,7 @@ export const usePresetStore = create(
       },
       
       // Update preset name
-      updatePresetName: (id, newName) => {
+      updatePresetName: (id: number, newName: string) => {
         const currentPresets = get().presets;
         const newPresets = currentPresets.map(preset =>
           preset.id === id ? { ...preset, name: newName } : preset
@@ -98,7 +130,7 @@ export const usePresetStore = create(
       },
       
       // Import presets
-      importPresets: (data) => {
+      importPresets: (data: any) => {
         if (data.presets && Array.isArray(data.presets)) {
           set({ 
             presets: data.presets,

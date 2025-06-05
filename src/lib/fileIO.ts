@@ -2,7 +2,7 @@
 export class FileIO {
   
   // Export data as JSON file
-  static exportToJSON(data, filename = 'promptgen-export.json') {
+  static exportToJSON(data: unknown, filename = 'promptgen-export.json'): boolean {
     try {
       const jsonString = JSON.stringify(data, null, 2);
       const blob = new Blob([jsonString], { type: 'application/json' });
@@ -15,7 +15,7 @@ export class FileIO {
   }
 
   // Export data as text file
-  static exportToText(text, filename = 'prompt-export.txt') {
+  static exportToText(text: string, filename = 'prompt-export.txt'): boolean {
     try {
       const blob = new Blob([text], { type: 'text/plain' });
       this.downloadFile(blob, filename);
@@ -27,7 +27,7 @@ export class FileIO {
   }
 
   // Download file helper
-  static downloadFile(blob, filename) {
+  static downloadFile(blob: Blob, filename: string): void {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -39,7 +39,7 @@ export class FileIO {
   }
 
   // Import JSON file
-  static async importFromJSON(file) {
+  static async importFromJSON(file: File): Promise<{ success: boolean; data?: unknown; error?: string }> {
     try {
       const text = await this.readFileAsText(file);
       const data = JSON.parse(text);
@@ -51,7 +51,7 @@ export class FileIO {
   }
 
   // Import text file
-  static async importFromText(file) {
+  static async importFromText(file: File): Promise<{ success: boolean; data?: string; error?: string }> {
     try {
       const text = await this.readFileAsText(file);
       return { success: true, data: text };
@@ -62,7 +62,7 @@ export class FileIO {
   }
 
   // Read file as text
-  static readFileAsText(file) {
+  static readFileAsText(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => resolve(e.target.result);
@@ -72,7 +72,7 @@ export class FileIO {
   }
 
   // Validate JSON structure for import
-  static validateImportData(data, type = 'presets') {
+  static validateImportData(data: any, type: 'presets' | 'history' = 'presets'): { valid: boolean; error?: string } {
     if (!data || typeof data !== 'object') {
       return { valid: false, error: 'Invalid data format' };
     }
@@ -102,7 +102,7 @@ export class FileIO {
   }
 
   // File System Access API support (where available)
-  static async saveToDirectory(data, filename, type = 'json') {
+  static async saveToDirectory(data: any, filename: string, type: 'json' | 'text' = 'json'): Promise<{ success: boolean; handle?: FileSystemFileHandle; fallback?: boolean; error?: string }> {
     try {
       // Check if File System Access API is supported
       if ('showSaveFilePicker' in window) {
@@ -144,7 +144,7 @@ export class FileIO {
   }
 
   // Load from directory (File System Access API)
-  static async loadFromDirectory() {
+  static async loadFromDirectory(): Promise<{ success: boolean; data?: unknown; error?: string }> {
     try {
       if ('showOpenFilePicker' in window) {
         const [fileHandle] = await window.showOpenFilePicker({

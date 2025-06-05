@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { usePresetStore } from '../stores/presetStore.js';
-import { useConfigStore } from '../stores/configStore.js';
-import { useInputStore } from '../stores/inputStore.js';
-import { useResultStore } from '../stores/resultStore.js';
-import { CATEGORIES } from '../lib/constants.js';
-import { ExportImport } from './ExportImport.jsx';
+import { usePresetStore } from '../stores/presetStore';
+import { useConfigStore } from '../stores/configStore';
+import { useInputStore } from '../stores/inputStore';
+import { useResultStore } from '../stores/resultStore';
+import { CATEGORIES } from '../lib/constants';
+import { ExportImport } from './ExportImport';
 
 export const PresetManager = () => {
   const [showPresets, setShowPresets] = useState(false);

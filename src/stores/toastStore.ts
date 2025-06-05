@@ -1,11 +1,30 @@
 import { create } from 'zustand';
 
-export const useToastStore = create((set, get) => ({
+export interface Toast {
+  id: number;
+  message: string;
+  type: string;
+  duration: number;
+  timestamp: number;
+}
+
+export interface ToastState {
+  toasts: Toast[];
+  addToast: (message: string, type?: string, duration?: number) => number;
+  removeToast: (id: number) => void;
+  clearToasts: () => void;
+  success: (message: string, duration?: number) => number;
+  error: (message: string, duration?: number) => number;
+  warning: (message: string, duration?: number) => number;
+  info: (message: string, duration?: number) => number;
+}
+
+export const useToastStore = create<ToastState>((set, get) => ({
   // Toast state
   toasts: [],
   
   // Add toast
-  addToast: (message, type = 'info', duration = 3000) => {
+  addToast: (message: string, type = 'info', duration = 3000) => {
     const toast = {
       id: Date.now() + Math.random(),
       message,
@@ -28,7 +47,7 @@ export const useToastStore = create((set, get) => ({
   },
   
   // Remove toast
-  removeToast: (id) => {
+  removeToast: (id: number) => {
     const currentToasts = get().toasts;
     const newToasts = currentToasts.filter(toast => toast.id !== id);
     set({ toasts: newToasts });

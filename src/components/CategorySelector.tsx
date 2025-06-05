@@ -1,6 +1,6 @@
-import { useConfigStore } from '../stores/configStore.js';
-import { useInputStore } from '../stores/inputStore.js';
-import { CATEGORIES } from '../lib/constants.js';
+import { useConfigStore } from '../stores/configStore';
+import { useInputStore } from '../stores/inputStore';
+import { CATEGORIES } from '../lib/constants';
 
 export const CategorySelector = () => {
   const { category, setCategory } = useConfigStore();

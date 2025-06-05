@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useInputStore } from '../stores/inputStore.js';
-import { useConfigStore } from '../stores/configStore.js';
-import { usePromptConverter } from '../hooks/usePromptConverter.js';
-import { CATEGORIES, PROMPT_EXAMPLES } from '../lib/constants.js';
+import { useInputStore } from '../stores/inputStore';
+import { useConfigStore } from '../stores/configStore';
+import { usePromptConverter } from '../hooks/usePromptConverter';
+import { CATEGORIES, PROMPT_EXAMPLES } from '../lib/constants';
 
 export const InputForm = () => {
   const { input, setInput, loading } = useInputStore();
