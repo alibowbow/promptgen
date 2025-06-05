@@ -1,7 +1,14 @@
-import { API_ENDPOINT, CATEGORIES } from './constants.js';
+import { API_ENDPOINT, CATEGORIES } from './constants';
+import type { Config } from '../stores/configStore';
+
+export type StatusCallback = (status: string) => void;
 
 // Generate style instruction based on user preferences
-export const generateStyleInstruction = (tone, length, format) => {
+export const generateStyleInstruction = (
+  tone: string,
+  length: string,
+  format: string
+): string => {
   const toneMap = {
     professional: "전문적이고 격식 있는 톤으로",
     friendly: "친근하고 대화하는 톤으로",
@@ -26,7 +33,7 @@ export const generateStyleInstruction = (tone, length, format) => {
 };
 
 // Parse API response to extract text
-export const parseApiResponse = (data) => {
+export const parseApiResponse = (data: any): string => {
   let output = "";
   
   if (
@@ -61,7 +68,11 @@ export const parseApiResponse = (data) => {
 };
 
 // Main API call function
-export const convertPrompt = async (input, config, onStatusUpdate) => {
+export const convertPrompt = async (
+  input: string,
+  config: Config,
+  onStatusUpdate: StatusCallback
+): Promise<string> => {
   const selectedCategory = CATEGORIES.find(c => c.key === config.category);
   if (!selectedCategory) {
     throw new Error("카테고리를 찾을 수 없습니다.");

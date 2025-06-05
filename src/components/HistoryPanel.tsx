@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useHistoryStore } from '../stores/historyStore.js';
-import { useConfigStore } from '../stores/configStore.js';
-import { useInputStore } from '../stores/inputStore.js';
-import { useResultStore } from '../stores/resultStore.js';
-import { CATEGORIES } from '../lib/constants.js';
+import { useHistoryStore } from '../stores/historyStore';
+import { useConfigStore } from '../stores/configStore';
+import { useInputStore } from '../stores/inputStore';
+import { useResultStore } from '../stores/resultStore';
+import { CATEGORIES } from '../lib/constants';
 
 export const HistoryPanel = () => {
   const [isExpanded, setIsExpanded] = useState(false);

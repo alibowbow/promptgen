@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { PresetManager } from './PresetManager.jsx';
-import { ExperimentalFeatures } from './ExperimentalFeatures.jsx';
-import { ExportImport } from './ExportImport.jsx';
+import { PresetManager } from './PresetManager';
+import { ExperimentalFeatures } from './ExperimentalFeatures';
+import { ExportImport } from './ExportImport';
 
 export const FloatingDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);

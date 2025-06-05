@@ -1,9 +1,9 @@
-import { useResultStore } from '../stores/resultStore.js';
-import { useConfigStore } from '../stores/configStore.js';
-import { useInputStore } from '../stores/inputStore.js';
-import { usePromptConverter } from '../hooks/usePromptConverter.js';
-import { useClipboard } from '../hooks/useClipboard.js';
-import { VIEW_MODES } from '../lib/constants.js';
+import { useResultStore } from '../stores/resultStore';
+import { useConfigStore } from '../stores/configStore';
+import { useInputStore } from '../stores/inputStore';
+import { usePromptConverter } from '../hooks/usePromptConverter';
+import { useClipboard } from '../hooks/useClipboard';
+import { VIEW_MODES } from '../lib/constants';
 
 export const ResultViewer = () => {
   const { result, viewMode, setViewMode, getResultStats } = useResultStore();

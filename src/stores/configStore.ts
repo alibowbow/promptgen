@@ -1,7 +1,29 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export const useConfigStore = create(
+export interface Config {
+  category: string;
+  outputLanguage: string;
+  tone: string;
+  length: string;
+  format: string;
+  styleMode: string;
+}
+
+export interface ConfigState extends Config {
+  showStyleOptions: boolean;
+  setCategory: (category: string) => void;
+  setOutputLanguage: (lang: string) => void;
+  setTone: (tone: string) => void;
+  setLength: (length: string) => void;
+  setFormat: (format: string) => void;
+  setStyleMode: (mode: string) => void;
+  setShowStyleOptions: (show: boolean) => void;
+  getConfig: () => Config;
+  loadConfig: (config: Config) => void;
+}
+
+export const useConfigStore = create<ConfigState>()(
   persist(
     (set, get) => ({
       // Category and language settings
@@ -18,13 +40,13 @@ export const useConfigStore = create(
       showStyleOptions: false,
       
       // Actions
-      setCategory: (category) => set({ category }),
-      setOutputLanguage: (outputLanguage) => set({ outputLanguage }),
-      setTone: (tone) => set({ tone }),
-      setLength: (length) => set({ length }),
-      setFormat: (format) => set({ format }),
-      setStyleMode: (styleMode) => set({ styleMode }),
-      setShowStyleOptions: (show) => set({ showStyleOptions: show }),
+      setCategory: (category: string) => set({ category }),
+      setOutputLanguage: (outputLanguage: string) => set({ outputLanguage }),
+      setTone: (tone: string) => set({ tone }),
+      setLength: (length: string) => set({ length }),
+      setFormat: (format: string) => set({ format }),
+      setStyleMode: (styleMode: string) => set({ styleMode }),
+      setShowStyleOptions: (show: boolean) => set({ showStyleOptions: show }),
       
       // Get current config as object
       getConfig: () => {
@@ -40,7 +62,7 @@ export const useConfigStore = create(
       },
       
       // Load config from object
-      loadConfig: (config) => set({
+      loadConfig: (config: Config) => set({
         category: config.category,
         outputLanguage: config.outputLanguage,
         tone: config.tone,

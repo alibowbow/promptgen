@@ -12,7 +12,7 @@ import {
   FloatingDrawer,
   DarkModeToggle
 } from './components';
-import { useHistoryStore } from './stores/historyStore.js';
+import { useHistoryStore } from './stores/historyStore';
 
 export default function App() {
   const { showHistory } = useHistoryStore();

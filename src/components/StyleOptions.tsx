@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useConfigStore } from '../stores/configStore.js';
-import { STYLE_OPTIONS_BY_CATEGORY, PREMIUM_STYLE_TREES } from '../lib/constants.js';
+import { useConfigStore } from '../stores/configStore';
+import { STYLE_OPTIONS_BY_CATEGORY, PREMIUM_STYLE_TREES } from '../lib/constants';
 
 export const StyleOptions = () => {
   const { category, styleMode, setStyleMode } = useConfigStore();

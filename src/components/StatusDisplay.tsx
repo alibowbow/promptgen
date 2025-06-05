@@ -1,4 +1,4 @@
-import { useInputStore } from '../stores/inputStore.js';
+import { useInputStore } from '../stores/inputStore';
 
 export const StatusDisplay = () => {
   const { error, apiStatus, loading } = useInputStore();

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useInputStore } from '../stores/inputStore.js';
-import { useResultStore } from '../stores/resultStore.js';
-import { useConfigStore } from '../stores/configStore.js';
-import { useToastStore } from '../stores/toastStore.js';
-import { PromptAnalyzer } from '../lib/promptAnalyzer.js';
+import { useInputStore } from '../stores/inputStore';
+import { useResultStore } from '../stores/resultStore';
+import { useConfigStore } from '../stores/configStore';
+import { useToastStore } from '../stores/toastStore';
+import { PromptAnalyzer } from '../lib/promptAnalyzer';
 
 export const ExperimentalFeatures = () => {
   const [activeFeature, setActiveFeature] = useState('quality');

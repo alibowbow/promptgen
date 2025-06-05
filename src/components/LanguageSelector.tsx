@@ -1,5 +1,5 @@
-import { useConfigStore } from '../stores/configStore.js';
-import { useInputStore } from '../stores/inputStore.js';
+import { useConfigStore } from '../stores/configStore';
+import { useInputStore } from '../stores/inputStore';
 
 export const LanguageSelector = () => {
   const { outputLanguage, setOutputLanguage } = useConfigStore();

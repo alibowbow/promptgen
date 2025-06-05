@@ -1,8 +1,8 @@
-import { useInputStore } from '../stores/inputStore.js';
-import { useConfigStore } from '../stores/configStore.js';
-import { useResultStore } from '../stores/resultStore.js';
-import { useHistoryStore } from '../stores/historyStore.js';
-import { convertPrompt } from '../lib/api.js';
+import { useInputStore } from '../stores/inputStore';
+import { useConfigStore } from '../stores/configStore';
+import { useResultStore } from '../stores/resultStore';
+import { useHistoryStore } from '../stores/historyStore';
+import { convertPrompt } from '../lib/api';
 
 export const usePromptConverter = () => {
   const { input, loading, setLoading, setError, setApiStatus, clearStates } = useInputStore();
@@ -10,7 +10,7 @@ export const usePromptConverter = () => {
   const { setResult, clearResult } = useResultStore();
   const { addToHistory } = useHistoryStore();
 
-  const handleConvert = async (e) => {
+  const handleConvert = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     
     clearStates();
