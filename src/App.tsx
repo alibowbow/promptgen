@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Header,
   LanguageSelector,
+  LengthSelector,
   CategorySelector,
   StyleOptions,
   HistoryPanel,
@@ -67,6 +68,7 @@ export default function App() {
                 <div className="glass-card">
                   <div className="glass-card-body space-y-8">
                     <LanguageSelector />
+                    <LengthSelector />
                     <CategorySelector />
                   </div>
                 </div>

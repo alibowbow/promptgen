@@ -1,6 +1,7 @@
 export { Header } from './Header';
 export { LanguageSelector } from './LanguageSelector';
 export { CategorySelector } from './CategorySelector';
+export { LengthSelector } from './LengthSelector';
 export { StyleOptions } from './StyleOptions';
 export { HistoryPanel } from './HistoryPanel';
 export { PresetManager } from './PresetManager';
