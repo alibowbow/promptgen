@@ -10,7 +10,7 @@
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["vite/client"],
+    "types": [],
     "baseUrl": "./src"
   },
   "include": ["src"],
