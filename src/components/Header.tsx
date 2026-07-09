@@ -1,7 +1,9 @@
 import { useHistoryStore } from '../stores/historyStore';
 
 export const Header = () => {
-  const { history, showHistory, setShowHistory } = useHistoryStore();
+  const history = useHistoryStore((s) => s.history);
+  const showHistory = useHistoryStore((s) => s.showHistory);
+  const setShowHistory = useHistoryStore((s) => s.setShowHistory);
 
   return (
     <header className="relative">

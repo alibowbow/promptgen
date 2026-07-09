@@ -5,10 +5,15 @@ import { usePromptConverter } from '../hooks/usePromptConverter';
 import { CATEGORIES, PROMPT_EXAMPLES } from '../lib/constants';
 
 export const InputForm = () => {
-  const { input, setInput, loading } = useInputStore();
-  const { category, outputLanguage } = useConfigStore();
-  const { handleConvert } = usePromptConverter();
-  const [charCount, setCharCount] = useState(input?.length || 0);
+  const input = useInputStore((s) => s.input);
+  const setInput = useInputStore((s) => s.setInput);
+  const loading = useInputStore((s) => s.loading);
+  const category = useConfigStore((s) => s.category);
+  const outputLanguage = useConfigStore((s) => s.outputLanguage);
+  const { handleConvert, cancelConvert } = usePromptConverter();
+  // Derive the count from the store so it never desyncs when input is loaded
+  // from history / presets / lab tools.
+  const charCount = input.length;
   const [isFocused, setIsFocused] = useState(false);
 
   const selectedCat = CATEGORIES.find((c) => c.key === category);
@@ -25,19 +30,17 @@ ${categoryExamples.map(example => `• ${example}`).join('\n')}
 
 구체적이고 상세할수록 더 좋은 결과를 얻을 수 있습니다.`;
 
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    setInput(value);
-    setCharCount(value.length);
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
   };
 
   // Keyboard shortcuts
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
         if (input.trim() && !loading) {
-          handleConvert(e);
+          handleConvert();
         }
       }
     };
@@ -143,18 +146,27 @@ ${categoryExamples.map(example => `• ${example}`).join('\n')}
           </div>
         </button>
 
+        {/* Cancel in-flight request */}
+        {loading && (
+          <button
+            type="button"
+            onClick={cancelConvert}
+            className="btn btn-secondary btn-sm w-full"
+          >
+            <span className="mr-2" aria-hidden="true">✕</span>
+            요청 취소
+          </button>
+        )}
+
         {/* Quick action buttons */}
         {!loading && input.trim() && (
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={() => {
-                setInput('');
-                setCharCount(0);
-              }}
+              onClick={() => setInput('')}
               className="btn btn-secondary btn-sm flex-1"
             >
-              <span className="mr-2">🗑️</span>
+              <span className="mr-2" aria-hidden="true">🗑️</span>
               초기화
             </button>
             <button
@@ -163,7 +175,6 @@ ${categoryExamples.map(example => `• ${example}`).join('\n')}
                 const randomExample = categoryExamples[Math.floor(Math.random() * categoryExamples.length)];
                 if (randomExample) {
                   setInput(randomExample);
-                  setCharCount(randomExample.length);
                 }
               }}
               className="btn btn-secondary btn-sm flex-1"

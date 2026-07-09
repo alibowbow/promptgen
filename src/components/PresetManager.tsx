@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { usePresetStore } from '../stores/presetStore';
+import type { Preset } from '../stores/presetStore';
 import { useConfigStore } from '../stores/configStore';
 import { useInputStore } from '../stores/inputStore';
 import { useResultStore } from '../stores/resultStore';
@@ -10,7 +11,7 @@ export const PresetManager = () => {
   const [showPresets, setShowPresets] = useState(false);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [presetName, setPresetName] = useState('');
-  const [editingPreset, setEditingPreset] = useState(null);
+  const [editingPreset, setEditingPreset] = useState<number | null>(null);
   
   const { 
     presets, 
@@ -36,7 +37,7 @@ export const PresetManager = () => {
     setShowSaveDialog(false);
   };
 
-  const handleLoadPreset = (id) => {
+  const handleLoadPreset = (id: number) => {
     const preset = loadPreset(id);
     if (preset) {
       loadConfig(preset.config);
@@ -49,7 +50,7 @@ export const PresetManager = () => {
     }
   };
 
-  const handleEditPresetName = (id, newName) => {
+  const handleEditPresetName = (id: number, newName: string) => {
     updatePresetName(id, newName);
     setEditingPreset(null);
   };
@@ -166,16 +167,27 @@ export const PresetManager = () => {
   );
 };
 
-const PresetItem = ({ 
-  preset, 
-  onLoad, 
-  onDelete, 
-  onToggleFavorite, 
+interface PresetItemProps {
+  preset: Preset;
+  onLoad: () => void;
+  onDelete: () => void;
+  onToggleFavorite: () => void;
+  onEdit: (newName: string) => void;
+  editingPreset: number | null;
+  setEditingPreset: (id: number | null) => void;
+  isFavorite: boolean;
+}
+
+const PresetItem = ({
+  preset,
+  onLoad,
+  onDelete,
+  onToggleFavorite,
   onEdit,
   editingPreset,
   setEditingPreset,
-  isFavorite 
-}) => {
+  isFavorite
+}: PresetItemProps) => {
   const [editName, setEditName] = useState(preset.name);
   
   const handleEdit = () => {
@@ -202,19 +214,23 @@ const PresetItem = ({
                 autoFocus
               />
               <button
+                type="button"
                 onClick={handleEdit}
+                aria-label="이름 저장"
                 className="text-xs text-green-600 hover:text-green-800"
               >
-                ✓
+                <span aria-hidden="true">✓</span>
               </button>
               <button
+                type="button"
                 onClick={() => {
                   setEditingPreset(null);
                   setEditName(preset.name);
                 }}
+                aria-label="편집 취소"
                 className="text-xs text-red-600 hover:text-red-800"
               >
-                ✕
+                <span aria-hidden="true">✕</span>
               </button>
             </div>
           ) : (
@@ -226,10 +242,12 @@ const PresetItem = ({
                 {preset.name}
               </button>
               <button
+                type="button"
                 onClick={() => setEditingPreset(preset.id)}
+                aria-label="프리셋 이름 편집"
                 className="text-xs text-slate-400 hover:text-slate-600"
               >
-                ✏️
+                <span aria-hidden="true">✏️</span>
               </button>
             </div>
           )}
@@ -252,16 +270,21 @@ const PresetItem = ({
         
         <div className="flex items-center gap-1 ml-2">
           <button
+            type="button"
             onClick={onToggleFavorite}
+            aria-label="즐겨찾기 토글"
+            aria-pressed={isFavorite}
             className={`text-sm ${isFavorite ? 'text-yellow-500' : 'text-gray-300'} hover:text-yellow-600`}
           >
-            ⭐
+            <span aria-hidden="true">⭐</span>
           </button>
           <button
+            type="button"
             onClick={onDelete}
+            aria-label="프리셋 삭제"
             className="text-xs text-red-400 hover:text-red-600"
           >
-            🗑️
+            <span aria-hidden="true">🗑️</span>
           </button>
         </div>
       </div>

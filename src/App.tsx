@@ -15,7 +15,7 @@ import {
 import { useHistoryStore } from './stores/historyStore';
 
 export default function App() {
-  const { showHistory } = useHistoryStore();
+  const showHistory = useHistoryStore((s) => s.showHistory);
   const [darkMode, setDarkMode] = useState(() => {
     // Check localStorage or system preference
     const saved = localStorage.getItem('darkMode');
@@ -97,7 +97,7 @@ export default function App() {
                   Made with <span className="text-red-500">♥</span> for AI Enthusiasts
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-500">
-                  © 2024 AI Prompt Optimizer - Powered by Advanced AI Technology
+                  © {new Date().getFullYear()} AI Prompt Optimizer
                 </p>
               </div>
             </footer>
