@@ -114,7 +114,7 @@ export class PromptAnalyzer {
     if (commaCount >= 2 && commaCount <= 6) score += 0.5;
     
     // Check for parentheses or brackets (additional context)
-    if (/[\(\)\[\]]/.test(text)) score += 0.5;
+    if (/[()[\]]/.test(text)) score += 0.5;
     
     // Penalize run-on sentences
     const hasRunOnSentence = sentences.some(sentence => 
@@ -167,14 +167,14 @@ export class PromptAnalyzer {
       .split(/\s+/)
       .filter(word => word.length > 2 && !stopWords.has(word));
 
-    const frequency = {};
+    const frequency: Record<string, number> = {};
     words.forEach(word => {
       frequency[word] = (frequency[word] || 0) + 1;
     });
 
     // Sort by frequency and return top keywords
     return Object.entries(frequency)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, limit)
       .map(([word, count]) => ({ word, count }));
   }
@@ -243,7 +243,7 @@ export class PromptAnalyzer {
   static expandPrompt(text: string, category: string = 'image'): string {
     if (!text) return text;
 
-    const expansions = {
+    const expansions: Record<string, string[]> = {
       image: [
         'high quality, detailed',
         'professional photography',

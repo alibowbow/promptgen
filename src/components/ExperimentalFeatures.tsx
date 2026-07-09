@@ -1,18 +1,26 @@
 import { useState } from 'react';
 import { useInputStore } from '../stores/inputStore';
-import { useResultStore } from '../stores/resultStore';
 import { useConfigStore } from '../stores/configStore';
 import { useToastStore } from '../stores/toastStore';
 import { PromptAnalyzer } from '../lib/promptAnalyzer';
+import type { PromptAnalysis } from '../lib/promptAnalyzer';
+
+interface Keyword {
+  word: string;
+  count: number;
+}
+interface Suggestion {
+  type: string;
+  message: string;
+}
 
 export const ExperimentalFeatures = () => {
   const [activeFeature, setActiveFeature] = useState('quality');
-  const [analysis, setAnalysis] = useState(null);
-  const [keywords, setKeywords] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
+  const [analysis, setAnalysis] = useState<PromptAnalysis | null>(null);
+  const [keywords, setKeywords] = useState<Keyword[]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   
   const { input, setInput } = useInputStore();
-  const { result } = useResultStore();
   const { category } = useConfigStore();
   const { info, success } = useToastStore();
 
@@ -23,9 +31,13 @@ export const ExperimentalFeatures = () => {
     }
 
     const qualityAnalysis = PromptAnalyzer.analyzeQuality(input);
+    if (!qualityAnalysis) {
+      info('분석할 수 없는 입력입니다.');
+      return;
+    }
     const extractedKeywords = PromptAnalyzer.extractKeywords(input);
     const improvementSuggestions = PromptAnalyzer.suggestImprovements(input, qualityAnalysis);
-    
+
     setAnalysis(qualityAnalysis);
     setKeywords(extractedKeywords);
     setSuggestions(improvementSuggestions);
@@ -68,8 +80,8 @@ export const ExperimentalFeatures = () => {
     setSuggestions(similarPrompts.map(prompt => ({ type: 'similar', message: prompt })));
   };
 
-  const generateVariations = (originalText, keywords) => {
-    const variations = [];
+  const generateVariations = (originalText: string, keywords: Keyword[]): string[] => {
+    const variations: string[] = [];
     const modifiers = ['detailed', 'artistic', 'realistic', 'creative', 'professional', 'minimalist'];
     const perspectives = ['close-up view of', 'wide shot of', 'aerial view of', 'side view of'];
     
@@ -89,13 +101,13 @@ export const ExperimentalFeatures = () => {
     return variations.slice(0, 4);
   };
 
-  const getScoreColor = (score) => {
+  const getScoreColor = (score: number) => {
     if (score >= 4.5) return 'text-green-600';
     if (score >= 3.5) return 'text-yellow-600';
     return 'text-red-600';
   };
 
-  const getScoreLabel = (score) => {
+  const getScoreLabel = (score: number) => {
     if (score >= 4.5) return '우수';
     if (score >= 3.5) return '보통';
     return '개선 필요';
@@ -169,19 +181,19 @@ export const ExperimentalFeatures = () => {
 
           {/* Detailed Scores */}
           <div className="space-y-2 mb-3">
-            {[
+            {([
               { key: 'clarity', label: '명확성' },
               { key: 'specificity', label: '구체성' },
               { key: 'length', label: '길이' },
               { key: 'structure', label: '구조' },
               { key: 'creativity', label: '창의성' }
-            ].map(({ key, label }) => (
+            ] as { key: keyof PromptAnalysis; label: string }[]).map(({ key, label }) => (
               <div key={key} className="flex items-center justify-between text-sm">
                 <span className="text-amber-700">{label}</span>
                 <div className="flex items-center gap-2">
                   <div className="w-16 bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-amber-400 h-2 rounded-full" 
+                    <div
+                      className="bg-amber-400 h-2 rounded-full"
                       style={{ width: `${(analysis[key] / 5) * 100}%` }}
                     />
                   </div>

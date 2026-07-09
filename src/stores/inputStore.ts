@@ -13,7 +13,7 @@ export interface InputState {
   resetInput: () => void;
 }
 
-export const useInputStore = create<InputState>((set, get) => ({
+export const useInputStore = create<InputState>((set) => ({
   // Input state
   input: '',
   loading: false,

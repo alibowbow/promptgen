@@ -1,4 +1,8 @@
 // File I/O utilities for export/import functionality
+
+const errorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
+
 export class FileIO {
   
   // Export data as JSON file
@@ -46,7 +50,7 @@ export class FileIO {
       return { success: true, data };
     } catch (error) {
       console.error('Error importing JSON:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: errorMessage(error) };
     }
   }
 
@@ -57,7 +61,7 @@ export class FileIO {
       return { success: true, data: text };
     } catch (error) {
       console.error('Error importing text:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: errorMessage(error) };
     }
   }
 
@@ -65,8 +69,8 @@ export class FileIO {
   static readFileAsText(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target.result);
-      reader.onerror = (e) => reject(new Error('Failed to read file'));
+      reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+      reader.onerror = () => reject(new Error('Failed to read file'));
       reader.readAsText(file);
     });
   }
@@ -117,7 +121,7 @@ export class FileIO {
           }]
         };
 
-        const fileHandle = await window.showSaveFilePicker(options);
+        const fileHandle = await (window as any).showSaveFilePicker(options);
         const writable = await fileHandle.createWritable();
         
         const content = type === 'json' 
@@ -139,7 +143,7 @@ export class FileIO {
       }
     } catch (error) {
       console.error('Error saving to directory:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: errorMessage(error) };
     }
   }
 
@@ -147,7 +151,7 @@ export class FileIO {
   static async loadFromDirectory(): Promise<{ success: boolean; data?: unknown; error?: string }> {
     try {
       if ('showOpenFilePicker' in window) {
-        const [fileHandle] = await window.showOpenFilePicker({
+        const [fileHandle] = await (window as any).showOpenFilePicker({
           types: [{
             description: 'JSON and Text files',
             accept: {
@@ -158,8 +162,8 @@ export class FileIO {
         });
 
         const file = await fileHandle.getFile();
-        const extension = file.name.split('.').pop().toLowerCase();
-        
+        const extension = (file.name.split('.').pop() || '').toLowerCase();
+
         if (extension === 'json') {
           return await this.importFromJSON(file);
         } else {
@@ -170,7 +174,7 @@ export class FileIO {
       }
     } catch (error) {
       console.error('Error loading from directory:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: errorMessage(error) };
     }
   }
 }

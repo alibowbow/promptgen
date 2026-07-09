@@ -1,4 +1,9 @@
-export const DarkModeToggle = ({ darkMode, setDarkMode }) => {
+interface DarkModeToggleProps {
+  darkMode: boolean;
+  setDarkMode: (value: boolean) => void;
+}
+
+export const DarkModeToggle = ({ darkMode, setDarkMode }: DarkModeToggleProps) => {
   return (
     <button
       onClick={() => setDarkMode(!darkMode)}

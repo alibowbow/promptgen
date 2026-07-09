@@ -6,7 +6,7 @@ export const CategorySelector = () => {
   const { category, setCategory } = useConfigStore();
   const { loading } = useInputStore();
 
-  const categoryIcons = {
+  const categoryIcons: Record<string, string> = {
     image: '🖼️',
     video: '🎬',
     document: '📄',
