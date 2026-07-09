@@ -9,17 +9,18 @@ export const ExportImport = () => {
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState('export');
   const [exportType, setExportType] = useState('presets');
-  const [importFile, setImportFile] = useState(null);
+  const [importFile, setImportFile] = useState<File | null>(null);
 
   const { presets, exportPresets, importPresets } = usePresetStore();
   const { history } = useHistoryStore();
   const { result } = useResultStore();
-  const { success, error } = useToastStore();
+  const { success, error, info } = useToastStore();
 
   const handleExport = async () => {
     try {
-      let data, filename;
-      
+      let data: unknown;
+      let filename = '';
+
       switch (exportType) {
         case 'presets':
           data = exportPresets();
@@ -45,8 +46,8 @@ export const ExportImport = () => {
           break;
       }
 
-      const exportSuccess = exportType === 'current' 
-        ? FileIO.exportToText(data, filename)
+      const exportSuccess = exportType === 'current'
+        ? FileIO.exportToText(String(data ?? ''), filename)
         : FileIO.exportToJSON(data, filename);
 
       if (exportSuccess) {
@@ -62,32 +63,53 @@ export const ExportImport = () => {
 
     try {
       const importResult = await FileIO.importFromJSON(importFile);
-      
+
       if (!importResult.success) {
-        error(importResult.error);
+        error(importResult.error || '파일을 읽을 수 없습니다.');
         return;
       }
 
-      const validation = FileIO.validateImportData(importResult.data);
-      if (!validation.valid) {
-        error(validation.error);
+      const data = (importResult.data ?? {}) as {
+        presets?: unknown;
+        history?: unknown;
+      };
+
+      const hasPresets = Array.isArray(data.presets);
+      const hasHistory = Array.isArray(data.history);
+
+      if (!hasPresets && !hasHistory) {
+        error('프리셋 또는 히스토리 데이터를 찾을 수 없습니다.');
         return;
       }
 
-      // Import based on data type
-      if (importResult.data.presets) {
-        const imported = importPresets(importResult.data);
-        if (imported) {
-          success('프리셋이 성공적으로 가져와졌습니다.');
+      let importedSomething = false;
+
+      if (hasPresets) {
+        const validation = FileIO.validateImportData(data, 'presets');
+        if (!validation.valid) {
+          error(validation.error || '프리셋 형식이 올바르지 않습니다.');
+          return;
+        }
+        if (importPresets(data)) {
+          success('프리셋을 가져왔습니다.');
+          importedSomething = true;
         }
       }
 
-      if (importResult.data.history) {
-        useHistoryStore.getState().importHistory?.(importResult.data.history);
-        success('히스토리가 성공적으로 가져와졌습니다.');
+      if (hasHistory) {
+        const added = useHistoryStore.getState().importHistory(data.history);
+        if (added > 0) {
+          success(`히스토리 ${added}개를 가져왔습니다.`);
+          importedSomething = true;
+        } else {
+          info('가져올 새 히스토리 항목이 없습니다.');
+        }
       }
 
-      setImportFile(null);
+      if (importedSomething) {
+        setImportFile(null);
+        setShowModal(false);
+      }
     } catch (err) {
       error('가져오기 중 오류가 발생했습니다.');
     }
@@ -109,15 +131,26 @@ export const ExportImport = () => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4 max-h-[80vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={() => setShowModal(false)}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="파일 관리"
+        className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md mx-4 max-h-[80vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">파일 관리</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100">파일 관리</h3>
           <button
+            type="button"
             onClick={() => setShowModal(false)}
-            className="text-gray-400 hover:text-gray-600 text-xl"
+            aria-label="닫기"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 text-xl"
           >
-            ✕
+            <span aria-hidden="true">✕</span>
           </button>
         </div>
 
@@ -221,7 +254,7 @@ export const ExportImport = () => {
               <input
                 type="file"
                 accept=".json"
-                onChange={(e) => setImportFile(e.target.files[0])}
+                onChange={(e) => setImportFile(e.target.files?.[0] ?? null)}
                 className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
               />
             </div>

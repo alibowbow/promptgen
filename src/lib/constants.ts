@@ -1,6 +1,31 @@
-export const API_ENDPOINT = "https://magenta-morning-find.glitch.me/generate";
+// Endpoint is configurable via env (VITE_API_ENDPOINT); falls back to the default proxy.
+export const API_ENDPOINT =
+  (import.meta.env.VITE_API_ENDPOINT as string | undefined) ||
+  "https://magenta-morning-find.glitch.me/generate";
 
-export const CATEGORIES = [
+// Request timeout (ms) — the default backend can cold-start slowly.
+export const REQUEST_TIMEOUT_MS = 40000;
+
+export interface Category {
+  key: string;
+  label: string;
+  englishPromptPrefix: string;
+  koreanPromptOptimizeInstruction: string;
+}
+
+export interface StyleOption {
+  key: string;
+  label: string;
+  emoji?: string;
+}
+
+export interface TreeNode {
+  key: string;
+  label: string;
+  children?: TreeNode[];
+}
+
+export const CATEGORIES: Category[] = [
   {
     key: "image",
     label: "이미지",
@@ -36,7 +61,7 @@ export const CATEGORIES = [
 ];
 
 // Category-specific prompt examples
-export const PROMPT_EXAMPLES = {
+export const PROMPT_EXAMPLES: Record<string, string[]> = {
   image: [
     "아름다운 일몰이 보이는 산 정상의 풍경",
     "미래적인 도시의 네온사인과 비 오는 밤",
@@ -60,7 +85,7 @@ export const PROMPT_EXAMPLES = {
 };
 
 // Minimal category-specific style options
-export const STYLE_OPTIONS_BY_CATEGORY = {
+export const STYLE_OPTIONS_BY_CATEGORY: Record<string, Record<string, StyleOption[]>> = {
   image: {
     style: [
       { key: "realistic", label: "사실적", emoji: "📸" },
@@ -99,7 +124,7 @@ export const STYLE_OPTIONS_BY_CATEGORY = {
 };
 
 // Premium style trees for each category with more than 50 sub options each
-export const PREMIUM_STYLE_TREES = {
+export const PREMIUM_STYLE_TREES: Record<string, TreeNode[]> = {
   image: [
     {
       key: 'lighting',
@@ -453,31 +478,132 @@ export const PREMIUM_STYLE_TREES = {
       ]
     }
   ],
-  code: []
+  code: [
+    {
+      key: 'language',
+      label: '언어',
+      children: [
+        { key: 'typescript', label: 'TypeScript' },
+        { key: 'python', label: 'Python' },
+        { key: 'javascript', label: 'JavaScript' },
+        { key: 'go', label: 'Go' },
+        { key: 'rust', label: 'Rust' },
+        { key: 'java', label: 'Java' }
+      ]
+    },
+    {
+      key: 'paradigm',
+      label: '패러다임',
+      children: [
+        { key: 'functional', label: '함수형' },
+        { key: 'object_oriented', label: '객체지향' },
+        { key: 'procedural', label: '절차형' },
+        { key: 'async', label: '비동기' },
+        { key: 'reactive', label: '반응형' }
+      ]
+    },
+    {
+      key: 'output_format',
+      label: '출력 형식',
+      children: [
+        { key: 'full_file', label: '전체 파일' },
+        { key: 'snippet', label: '스니펫' },
+        { key: 'diff', label: '변경점(diff)' },
+        { key: 'pseudocode', label: '의사코드' },
+        { key: 'cli', label: 'CLI 명령' }
+      ]
+    },
+    {
+      key: 'constraints',
+      label: '제약',
+      children: [
+        { key: 'no_deps', label: '외부 의존성 없이' },
+        { key: 'std_only', label: '표준 라이브러리만' },
+        { key: 'performance', label: '성능 최적화' },
+        { key: 'memory_safe', label: '메모리 안전' },
+        { key: 'idiomatic', label: '관용적 스타일' }
+      ]
+    },
+    {
+      key: 'quality',
+      label: '품질',
+      children: [
+        { key: 'with_tests', label: '테스트 포함' },
+        { key: 'with_comments', label: '주석 포함' },
+        { key: 'error_handling', label: '에러 처리' },
+        { key: 'type_hints', label: '타입 힌트' },
+        { key: 'docstrings', label: '문서화 주석' }
+      ]
+    }
+  ]
 };
 
+// Flatten a premium tree into a leaf key -> label map.
+const flattenTree = (
+  nodes: TreeNode[],
+  acc: Record<string, string> = {}
+): Record<string, string> => {
+  for (const node of nodes) {
+    if (node.children && node.children.length > 0) {
+      flattenTree(node.children, acc);
+    } else {
+      acc[node.key] = node.label;
+    }
+  }
+  return acc;
+};
+
+// Resolve selected style keys into {key,label} terms for a category.
+export const collectStyleTerms = (
+  category: string,
+  basic: Record<string, string>,
+  premium: string[]
+): { key: string; label: string }[] => {
+  const terms: { key: string; label: string }[] = [];
+  const groups = STYLE_OPTIONS_BY_CATEGORY[category] || {};
+
+  for (const [groupKey, optionKey] of Object.entries(basic)) {
+    if (!optionKey) continue;
+    const opt = (groups[groupKey] || []).find((o) => o.key === optionKey);
+    if (opt) terms.push({ key: opt.key, label: opt.label });
+  }
+
+  const leaves = flattenTree(PREMIUM_STYLE_TREES[category] || []);
+  for (const key of premium) {
+    if (leaves[key]) terms.push({ key, label: leaves[key] });
+  }
+
+  return terms;
+};
+
+export interface KeyLabel {
+  key: string;
+  label: string;
+  emoji?: string;
+}
+
 // Legacy options for backward compatibility
-export const TONE_OPTIONS = [
+export const TONE_OPTIONS: KeyLabel[] = [
   { key: "professional", label: "전문적" },
   { key: "friendly", label: "친근한" },
   { key: "creative", label: "창의적" },
   { key: "direct", label: "직설적" }
 ];
 
-export const LENGTH_OPTIONS = [
+export const LENGTH_OPTIONS: KeyLabel[] = [
   { key: "short", label: "짧게" },
   { key: "medium", label: "보통" },
   { key: "long", label: "길게" }
 ];
 
-export const FORMAT_OPTIONS = [
+export const FORMAT_OPTIONS: KeyLabel[] = [
   { key: "sentence", label: "문장" },
   { key: "markup", label: "마크업" },
   { key: "slogan", label: "슬로건" },
   { key: "json", label: "JSON" }
 ];
 
-export const VIEW_MODES = [
+export const VIEW_MODES: KeyLabel[] = [
   { key: "short", label: "짧게", emoji: "📝" },
   { key: "normal", label: "보통", emoji: "📄" },
   { key: "detailed", label: "상세", emoji: "📋" }

@@ -129,13 +129,26 @@ export const usePresetStore = create<PresetState>()(
         };
       },
       
-      // Import presets
+      // Import presets — merge with existing (dedupe by id) instead of replacing,
+      // so importing a backup never destroys the user's current presets.
       importPresets: (data: any) => {
-        if (data.presets && Array.isArray(data.presets)) {
-          set({ 
-            presets: data.presets,
-            favorites: data.favorites || []
-          });
+        if (data && Array.isArray(data.presets)) {
+          const current = get().presets;
+          const existingIds = new Set(current.map((p) => p.id));
+          const incoming: Preset[] = data.presets.filter(
+            (p: any) => p && typeof p.id !== 'undefined' && p.name && p.config
+          );
+          const fresh = incoming.filter((p) => !existingIds.has(p.id));
+
+          const mergedPresets = [...fresh, ...current];
+          const incomingFavorites: number[] = Array.isArray(data.favorites)
+            ? data.favorites
+            : [];
+          const mergedFavorites = Array.from(
+            new Set([...get().favorites, ...incomingFavorites])
+          );
+
+          set({ presets: mergedPresets, favorites: mergedFavorites });
           return true;
         }
         return false;
@@ -146,6 +159,7 @@ export const usePresetStore = create<PresetState>()(
     }),
     {
       name: 'prompt-presets',
+      version: 1,
       partialize: (state) => ({
         presets: state.presets,
         favorites: state.favorites
