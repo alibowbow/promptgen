@@ -69,21 +69,21 @@ const ModuleCard = ({
                   onClick={() => onOpenLesson(lesson.id)}
                   className="w-full flex items-center gap-3 py-2.5 text-left group"
                 >
+                  {/* Step badge: lesson number, turns into a ✓ when completed.
+                      (A hollow circle here read as a selectable checkbox.) */}
                   <span
-                    className={`w-5 h-5 shrink-0 rounded-full border-2 flex items-center justify-center text-[10px] ${
+                    className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-xs font-semibold tabular-nums ${
                       isDone
-                        ? 'bg-emerald-500 border-emerald-500 text-white'
-                        : 'border-slate-300 dark:border-slate-600 text-transparent'
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/40 group-hover:text-indigo-600 dark:group-hover:text-indigo-300'
                     }`}
                     aria-hidden="true"
                   >
-                    ✓
-                  </span>
-                  <span className="text-xs text-slate-400 tabular-nums w-5">
-                    {i + 1}
+                    {isDone ? '✓' : i + 1}
                   </span>
                   <span className="flex-1 text-sm text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
                     {lesson.title}
+                    {isDone && <span className="sr-only"> (완료)</span>}
                   </span>
                   <span
                     className="text-slate-300 dark:text-slate-600 group-hover:translate-x-0.5 transition-transform"
