@@ -1,9 +1,13 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { ToastContainer, FloatingDrawer, DarkModeToggle } from './components';
 import { AppNav } from './components/nav/AppNav';
-import { useViewStore } from './stores/viewStore';
+import { useViewStore, APP_VIEWS } from './stores/viewStore';
+import type { AppView } from './stores/viewStore';
 
 // Lazy-load each mode so its code + content chunk loads on demand.
+const HomeView = lazy(() =>
+  import('./components/home/HomeView').then((m) => ({ default: m.HomeView }))
+);
 const LearnView = lazy(() =>
   import('./components/learn/LearnView').then((m) => ({ default: m.LearnView }))
 );
@@ -24,8 +28,41 @@ const ViewFallback = () => (
   </div>
 );
 
+/** Reflect app state into the URL hash and back (linkable views/lessons). */
+const useHashRouting = () => {
+  const view = useViewStore((s) => s.view);
+  const activeLessonId = useViewStore((s) => s.activeLessonId);
+
+  // hash -> state
+  useEffect(() => {
+    const apply = () => {
+      const [v, lesson] = window.location.hash.replace(/^#\/?/, '').split('/');
+      if ((APP_VIEWS as string[]).includes(v)) {
+        const s = useViewStore.getState();
+        if (v === 'learn' && lesson) s.openLesson(lesson);
+        else if (s.view !== v || s.activeLessonId) s.setView(v as AppView);
+      }
+    };
+    apply();
+    window.addEventListener('hashchange', apply);
+    return () => window.removeEventListener('hashchange', apply);
+  }, []);
+
+  // state -> hash
+  useEffect(() => {
+    const target =
+      view === 'learn' && activeLessonId
+        ? `#/learn/${activeLessonId}`
+        : `#/${view}`;
+    if (window.location.hash !== target) {
+      window.history.pushState(null, '', target);
+    }
+  }, [view, activeLessonId]);
+};
+
 export default function App() {
   const view = useViewStore((s) => s.view);
+  useHashRouting();
 
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode');
@@ -53,6 +90,7 @@ export default function App() {
 
             <main>
               <Suspense fallback={<ViewFallback />}>
+                {view === 'home' && <HomeView />}
                 {view === 'learn' && <LearnView />}
                 {view === 'library' && <LibraryView />}
                 {view === 'generate' && <GenerateView />}

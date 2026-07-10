@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { MODULES, TOTAL_LESSONS } from '../../data/curriculum';
 import { useLearningStore } from '../../stores/learningStore';
+import { useViewStore } from '../../stores/viewStore';
 import { LessonView } from './LessonView';
 import type { Module } from '../../data/types';
 
@@ -102,7 +102,9 @@ const ModuleCard = ({
 };
 
 export const LearnView = () => {
-  const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
+  const activeLessonId = useViewStore((s) => s.activeLessonId);
+  const openLesson = useViewStore((s) => s.openLesson);
+  const closeLesson = useViewStore((s) => s.closeLesson);
   const completedLessons = useLearningStore((s) => s.completedLessons);
   const doneCount = completedLessons.length;
   const pct = TOTAL_LESSONS > 0 ? Math.round((doneCount / TOTAL_LESSONS) * 100) : 0;
@@ -111,8 +113,8 @@ export const LearnView = () => {
     return (
       <LessonView
         lessonId={activeLessonId}
-        onNavigate={setActiveLessonId}
-        onExit={() => setActiveLessonId(null)}
+        onNavigate={openLesson}
+        onExit={closeLesson}
       />
     );
   }
@@ -144,11 +146,7 @@ export const LearnView = () => {
       </div>
 
       {MODULES.map((module) => (
-        <ModuleCard
-          key={module.id}
-          module={module}
-          onOpenLesson={setActiveLessonId}
-        />
+        <ModuleCard key={module.id} module={module} onOpenLesson={openLesson} />
       ))}
     </div>
   );

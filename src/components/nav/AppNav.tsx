@@ -2,6 +2,7 @@ import { useViewStore } from '../../stores/viewStore';
 import type { AppView } from '../../stores/viewStore';
 
 const TABS: { key: AppView; label: string; emoji: string }[] = [
+  { key: 'home', label: '홈', emoji: '🏠' },
   { key: 'learn', label: '학습', emoji: '📚' },
   { key: 'library', label: '라이브러리', emoji: '🗂️' },
   { key: 'generate', label: '생성기', emoji: '✨' },
@@ -17,7 +18,7 @@ export const AppNav = () => {
         {/* Brand */}
         <button
           type="button"
-          onClick={() => setView('learn')}
+          onClick={() => setView('home')}
           className="flex items-center gap-3 text-left"
         >
           <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center text-white text-xl shadow-lg">

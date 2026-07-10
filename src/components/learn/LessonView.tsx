@@ -1,9 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ALL_LESSONS, getLesson, MODULES } from '../../data/curriculum';
+import { relatedPromptsForLesson } from '../../data/crossLinks';
+import type { LibraryPrompt } from '../../data/types';
 import { useLearningStore } from '../../stores/learningStore';
 import { useInputStore } from '../../stores/inputStore';
 import { useViewStore } from '../../stores/viewStore';
 import { useToastStore } from '../../stores/toastStore';
+import { QuizSection } from './QuizSection';
+import { PromptDetail } from '../library/PromptDetail';
 
 interface Props {
   lessonId: string;
@@ -19,6 +23,7 @@ export const LessonView = ({ lessonId, onNavigate, onExit }: Props) => {
   const setInput = useInputStore((s) => s.setInput);
   const setView = useViewStore((s) => s.setView);
   const info = useToastStore((s) => s.info);
+  const [detailPrompt, setDetailPrompt] = useState<LibraryPrompt | null>(null);
 
   // Scroll to top whenever the lesson changes.
   useEffect(() => {
@@ -42,6 +47,10 @@ export const LessonView = ({ lessonId, onNavigate, onExit }: Props) => {
   const idx = ALL_LESSONS.findIndex((l) => l.id === lessonId);
   const prev = idx > 0 ? ALL_LESSONS[idx - 1] : null;
   const next = idx < ALL_LESSONS.length - 1 ? ALL_LESSONS[idx + 1] : null;
+  const lessonIndexInModule = module
+    ? module.lessons.findIndex((l) => l.id === lessonId)
+    : 0;
+  const related = relatedPromptsForLesson(lesson.moduleId, lessonIndexInModule);
 
   const practiceInGenerator = () => {
     setInput(lesson.exercise);
@@ -162,8 +171,45 @@ export const LessonView = ({ lessonId, onNavigate, onExit }: Props) => {
               생성기에서 연습하기 →
             </button>
           </section>
+
+          {/* Comprehension quiz */}
+          <QuizSection lessonId={lessonId} />
+
+          {/* Related library prompts */}
+          {related.length > 0 && (
+            <section>
+              <h2 className="text-sm font-bold uppercase tracking-wide text-indigo-600 dark:text-indigo-300 mb-3">
+                🗂️ 이 원리를 쓰는 프롬프트
+              </h2>
+              <ul className="space-y-2">
+                {related.map((p) => (
+                  <li key={p.id}>
+                    <button
+                      type="button"
+                      onClick={() => setDetailPrompt(p)}
+                      className="w-full text-left rounded-xl border border-slate-200/60 dark:border-slate-700/40 bg-white/60 dark:bg-slate-800/50 px-4 py-3 hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors group"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-medium text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-300">
+                          {p.title}
+                        </span>
+                        <span className="text-slate-300 dark:text-slate-600" aria-hidden="true">→</span>
+                      </div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
+                        {p.principle}
+                      </p>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </div>
       </div>
+
+      {detailPrompt && (
+        <PromptDetail prompt={detailPrompt} onClose={() => setDetailPrompt(null)} />
+      )}
 
       {/* Footer nav */}
       <div className="mt-6 flex items-center justify-between gap-3 flex-wrap">

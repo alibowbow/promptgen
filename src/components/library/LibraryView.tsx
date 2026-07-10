@@ -3,6 +3,7 @@ import { LIBRARY_PROMPTS, countByCategory, PROMPT_COUNT } from '../../data/libra
 import { CATEGORIES } from '../../data/categories';
 import type { Difficulty, LibraryPrompt } from '../../data/types';
 import { useLibraryStore } from '../../stores/libraryStore';
+import { useViewStore } from '../../stores/viewStore';
 import { PromptCard } from './PromptCard';
 import { PromptDetail } from './PromptDetail';
 
@@ -10,7 +11,10 @@ const DIFFICULTIES: (Difficulty | 'all')[] = ['all', '입문', '중급', '고급
 
 export const LibraryView = () => {
   const [query, setQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string>('all');
+  // A shortcut (e.g. from the home dashboard) can preselect a category.
+  const [activeCategory, setActiveCategory] = useState<string>(
+    () => useViewStore.getState().consumeLibrarySeed() ?? 'all'
+  );
   const [difficulty, setDifficulty] = useState<Difficulty | 'all'>('all');
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [activePrompt, setActivePrompt] = useState<LibraryPrompt | null>(null);

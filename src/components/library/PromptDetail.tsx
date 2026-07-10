@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { LibraryPrompt } from '../../data/types';
 import { CATEGORY_BY_SLUG } from '../../data/categories';
+import { relatedPrompts, moduleForCategory } from '../../data/crossLinks';
 import { useLibraryStore } from '../../stores/libraryStore';
 import { useInputStore } from '../../stores/inputStore';
 import { useViewStore } from '../../stores/viewStore';
+import { useLearningStore } from '../../stores/learningStore';
 import { useClipboard } from '../../hooks/useClipboard';
 import { useToastStore } from '../../stores/toastStore';
 
@@ -14,14 +16,27 @@ export const PromptDetail = ({
   prompt: LibraryPrompt;
   onClose: () => void;
 }) => {
-  const isFavorite = useLibraryStore((s) => s.favorites.includes(prompt.id));
+  // Related-prompt links swap the modal content in place.
+  const [p, setP] = useState(prompt);
+  useEffect(() => setP(prompt), [prompt]);
+
+  const isFavorite = useLibraryStore((s) => s.favorites.includes(p.id));
   const toggleFavorite = useLibraryStore((s) => s.toggleFavorite);
   const setInput = useInputStore((s) => s.setInput);
   const setView = useViewStore((s) => s.setView);
+  const openLesson = useViewStore((s) => s.openLesson);
+  const completedLessons = useLearningStore((s) => s.completedLessons);
   const { copied, copyToClipboard } = useClipboard();
   const success = useToastStore((s) => s.success);
   const info = useToastStore((s) => s.info);
-  const category = CATEGORY_BY_SLUG[prompt.category];
+
+  const category = CATEGORY_BY_SLUG[p.category];
+  const related = relatedPrompts(p);
+  const teachModule = moduleForCategory(p.category);
+  const teachLesson = teachModule
+    ? (teachModule.lessons.find((l) => !completedLessons.includes(l.id)) ??
+      teachModule.lessons[0])
+    : undefined;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -36,9 +51,15 @@ export const PromptDetail = ({
   }, [onClose]);
 
   const useInGenerator = () => {
-    setInput(prompt.prompt);
+    setInput(p.prompt);
     setView('generate');
     info('생성기로 옮겼어요. 원하는 대로 다듬어 사용하세요!');
+  };
+
+  const goToLesson = () => {
+    if (!teachLesson) return;
+    onClose();
+    openLesson(teachLesson.id);
   };
 
   return (
@@ -49,7 +70,7 @@ export const PromptDetail = ({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={prompt.title}
+        aria-label={p.title}
         className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -59,11 +80,11 @@ export const PromptDetail = ({
             <div>
               {category && (
                 <div className="text-sm text-slate-500 dark:text-slate-400">
-                  {category.emoji} {category.label} · {prompt.difficulty}
+                  {category.emoji} {category.label} · {p.difficulty}
                 </div>
               )}
               <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">
-                {prompt.title}
+                {p.title}
               </h2>
             </div>
             <button
@@ -85,7 +106,7 @@ export const PromptDetail = ({
               <button
                 type="button"
                 onClick={() => {
-                  copyToClipboard(prompt.prompt);
+                  copyToClipboard(p.prompt);
                   success('프롬프트를 복사했어요.');
                 }}
                 className="text-xs px-3 py-1 rounded-full bg-cyan-100 dark:bg-cyan-900/40 text-cyan-800 dark:text-cyan-200 hover:bg-cyan-200 dark:hover:bg-cyan-900/60"
@@ -94,7 +115,7 @@ export const PromptDetail = ({
               </button>
             </div>
             <pre className="whitespace-pre-wrap font-mono text-sm text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
-              {prompt.prompt}
+              {p.prompt}
             </pre>
           </div>
 
@@ -104,24 +125,47 @@ export const PromptDetail = ({
               <div className="text-xs font-bold text-indigo-600 dark:text-indigo-300 mb-1">
                 핵심 원리
               </div>
-              <p className="text-sm text-slate-700 dark:text-slate-200">{prompt.principle}</p>
+              <p className="text-sm text-slate-700 dark:text-slate-200">{p.principle}</p>
             </div>
             <div className="rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-700/40 p-4">
               <div className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">
                 왜 효과적인가
               </div>
-              <p className="text-sm text-slate-700 dark:text-slate-200">{prompt.why}</p>
+              <p className="text-sm text-slate-700 dark:text-slate-200">{p.why}</p>
             </div>
           </div>
 
-          {prompt.tip && (
-            <p className="text-sm text-slate-500 dark:text-slate-400">💡 {prompt.tip}</p>
+          {p.tip && (
+            <p className="text-sm text-slate-500 dark:text-slate-400">💡 {p.tip}</p>
+          )}
+
+          {/* Learn the principle behind this prompt */}
+          {teachModule && teachLesson && (
+            <button
+              type="button"
+              onClick={goToLesson}
+              className="w-full text-left rounded-xl bg-purple-50/70 dark:bg-purple-950/30 border border-purple-200/60 dark:border-purple-900/40 p-4 hover:border-purple-400 transition-colors group"
+            >
+              <div className="text-xs font-bold text-purple-600 dark:text-purple-300 mb-1">
+                📚 이 원리를 제대로 배우기
+              </div>
+              <p className="text-sm text-slate-700 dark:text-slate-200">
+                {teachModule.emoji} <strong>{teachModule.title}</strong> ·{' '}
+                {teachLesson.title}
+                <span
+                  className="ml-1 text-purple-400 group-hover:translate-x-0.5 inline-block transition-transform"
+                  aria-hidden="true"
+                >
+                  →
+                </span>
+              </p>
+            </button>
           )}
 
           {/* Tags */}
-          {prompt.tags.length > 0 && (
+          {p.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
-              {prompt.tags.map((t) => (
+              {p.tags.map((t) => (
                 <span
                   key={t}
                   className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
@@ -132,6 +176,27 @@ export const PromptDetail = ({
             </div>
           )}
 
+          {/* Related prompts */}
+          {related.length > 0 && (
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
+                비슷한 프롬프트
+              </div>
+              <div className="flex flex-col gap-1.5">
+                {related.map((r) => (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => setP(r)}
+                    className="text-left text-sm text-indigo-600 dark:text-indigo-300 hover:underline"
+                  >
+                    ↳ {r.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex items-center gap-2 flex-wrap pt-2">
             <button type="button" onClick={useInGenerator} className="btn btn-primary btn-sm">
@@ -139,7 +204,7 @@ export const PromptDetail = ({
             </button>
             <button
               type="button"
-              onClick={() => toggleFavorite(prompt.id)}
+              onClick={() => toggleFavorite(p.id)}
               aria-pressed={isFavorite}
               className="btn btn-secondary btn-sm"
             >

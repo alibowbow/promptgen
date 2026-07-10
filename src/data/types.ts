@@ -66,6 +66,23 @@ export interface Module {
   lessons: Lesson[];
 }
 
+/** A single multiple-choice quiz question. */
+export interface QuizQuestion {
+  q: string;
+  /** Exactly 4 options. */
+  options: string[];
+  /** Index (0-3) of the correct option. */
+  answer: number;
+  /** Why the answer is correct (Korean, 1-2 sentences). */
+  explain: string;
+}
+
+/** The comprehension quiz attached to one lesson. */
+export interface LessonQuiz {
+  lessonId: string;
+  questions: QuizQuestion[];
+}
+
 /** Library category metadata. */
 export interface Category {
   slug: string;
