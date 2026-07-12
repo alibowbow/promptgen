@@ -64,8 +64,8 @@ export const IMAGE_ANATOMY: AnatomySegment[] = [
     label: "Parameters",
     ko: "파라미터",
     description:
-      "종횡비, 모델 버전, 스타일 강도처럼 그림 내용이 아닌 생성 설정을 제어합니다. Midjourney의 --ar 같은 플래그는 반드시 프롬프트 맨 끝에 붙여야 하며, 문장 중간에 넣으면 인식되지 않습니다.",
-    example: "--ar 16:9 --stylize 200",
+      "스타일 강도, 제외 요소, 시드처럼 그림 내용이 아닌 생성 설정을 제어합니다. 플래그는 반드시 프롬프트 맨 끝에 붙이며, 화면비·해상도·모델 버전은 대부분의 플랫폼에서 UI로 직접 선택하므로 굳이 적을 필요가 없습니다.",
+    example: "--stylize 200 --no text",
   },
 ];
 
@@ -747,26 +747,8 @@ export const IMAGE_VOCAB_TABLES: ImageVocabTable[] = [
     title: "모델 파라미터",
     emoji: "⚙️",
     intro:
-      "그림의 내용이 아니라 생성 방식 자체를 제어하는 스위치로, 화면비와 재현성, 제외 요소를 확정하고 싶을 때 프롬프트 끝에 붙입니다.",
+      "그림의 내용이 아니라 생성 방식을 제어하는 스위치로, 프롬프트 끝에 붙입니다. 화면비·해상도·모델 버전은 대부분 플랫폼 UI에서 직접 선택하므로 여기서는 다루지 않습니다.",
     terms: [
-      {
-        en: "--ar 16:9",
-        ko: "가로 와이드 화면비",
-        effect: "시네마틱한 가로형 프레임을 생성(풍경, 썸네일, 배너에 적합)",
-        usage: "epic mountain vista --ar 16:9",
-      },
-      {
-        en: "--ar 9:16",
-        ko: "세로 화면비",
-        effect: "모바일과 릴스용 세로형 프레임을 생성(전신 인물에 적합)",
-        usage: "full-body fashion portrait --ar 9:16",
-      },
-      {
-        en: "--v 6",
-        ko: "미드저니 버전 지정",
-        effect: "모델 버전을 고정해 프롬프트 이해도와 사실성의 세대를 통제",
-        usage: "hyperrealistic street scene --v 6",
-      },
       {
         en: "--stylize 250",
         ko: "스타일라이즈 강도",
@@ -859,7 +841,7 @@ export const PROGRESSIVE_EXAMPLE: ProgressiveStep[] = [
   {
     title: "+분위기/파라미터",
     addition: "감정 키워드와 모델 파라미터",
-    prompt: "a weathered white lighthouse standing on a jagged sea cliff, waves crashing against the rocks, cinematic photography, shot on 35mm film, golden hour backlight, god rays breaking through storm clouds, teal and orange color grading, low angle shot from the shoreline, rule of thirds, long exposure, silky waves, lonely yet hopeful atmosphere, highly detailed, film grain --ar 16:9 --stylize 200 --no text, watermark",
-    note: "고독하지만 희망적인 감정이 장면의 해석을 하나로 모으고, --ar 16:9와 --no 플래그가 출력 형식까지 통제해 바로 쓸 수 있는 완성 프롬프트가 됩니다.",
+    prompt: "a weathered white lighthouse standing on a jagged sea cliff, waves crashing against the rocks, cinematic photography, shot on 35mm film, golden hour backlight, god rays breaking through storm clouds, teal and orange color grading, low angle shot from the shoreline, rule of thirds, long exposure, silky waves, lonely yet hopeful atmosphere, highly detailed, film grain --stylize 200 --no text, watermark",
+    note: "고독하지만 희망적인 감정이 장면의 해석을 하나로 모으고, --stylize와 --no 플래그가 생성 방식까지 통제해 바로 쓸 수 있는 완성 프롬프트가 됩니다. (화면비·해상도는 플랫폼 UI에서 선택하세요.)",
   },
 ];

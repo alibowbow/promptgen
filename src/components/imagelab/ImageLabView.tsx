@@ -26,6 +26,7 @@ export const ImageLabView = () => {
   const [activePart, setActivePart] = useState(IMAGE_ANATOMY[0]?.key ?? 'subject');
   const [stepIdx, setStepIdx] = useState(0);
   const [activeTable, setActiveTable] = useState(IMAGE_VOCAB_TABLES[0]?.key ?? 'lighting');
+  const [expandedTerm, setExpandedTerm] = useState<string | null>(null);
   const [picked, setPicked] = useState<string[]>([]);
   const [subject, setSubject] = useState('');
   const [trayOpen, setTrayOpen] = useState(true);
@@ -204,7 +205,10 @@ export const ImageLabView = () => {
               <button
                 key={t.key}
                 type="button"
-                onClick={() => setActiveTable(t.key)}
+                onClick={() => {
+                  setActiveTable(t.key);
+                  setExpandedTerm(null);
+                }}
                 aria-pressed={activeTable === t.key}
                 className={`px-3 py-1.5 rounded-full text-sm transition-all ${
                   activeTable === t.key
@@ -220,55 +224,62 @@ export const ImageLabView = () => {
           {table && (
             <>
               <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">{table.intro}</p>
-              <div className="overflow-x-auto rounded-xl border border-slate-200/60 dark:border-slate-700/40">
-                <table className="w-full text-sm min-w-[640px]">
-                  <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-800/60 text-left">
-                      <th className="px-3 py-2.5 font-semibold text-slate-600 dark:text-slate-300 w-44">키워드</th>
-                      <th className="px-3 py-2.5 font-semibold text-slate-600 dark:text-slate-300 w-28">뜻</th>
-                      <th className="px-3 py-2.5 font-semibold text-slate-600 dark:text-slate-300">효과</th>
-                      <th className="px-3 py-2.5 font-semibold text-slate-600 dark:text-slate-300">사용 예</th>
-                      <th className="px-3 py-2.5 w-20"><span className="sr-only">담기</span></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {table.terms.map((term) => {
-                      const isPicked = picked.includes(term.en);
-                      return (
-                        <tr
-                          key={term.en}
-                          className={`border-t border-slate-100 dark:border-slate-700/40 ${
-                            isPicked ? 'bg-indigo-50/60 dark:bg-indigo-900/20' : ''
+              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-2.5">
+                {table.terms.map((term) => {
+                  const isPicked = picked.includes(term.en);
+                  const isOpen = expandedTerm === term.en;
+                  return (
+                    <div
+                      key={term.en}
+                      className={`rounded-xl border p-3 transition-colors ${
+                        isPicked
+                          ? 'border-indigo-400/70 bg-indigo-50/70 dark:bg-indigo-900/20'
+                          : 'border-slate-200/60 dark:border-slate-700/40 bg-white/60 dark:bg-slate-800/50 hover:border-indigo-300/60'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setExpandedTerm(isOpen ? null : term.en)}
+                          aria-expanded={isOpen}
+                          className="flex-1 min-w-0 text-left"
+                        >
+                          <span className="font-semibold text-[15px] text-indigo-700 dark:text-indigo-300 break-words">
+                            {term.en}
+                          </span>
+                          <span className="ml-2 text-xs text-slate-500 dark:text-slate-400">
+                            {term.ko}
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => togglePick(term.en)}
+                          aria-pressed={isPicked}
+                          className={`shrink-0 px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                            isPicked
+                              ? 'bg-indigo-500 text-white'
+                              : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/40'
                           }`}
                         >
-                          <td className="px-3 py-2.5 font-mono font-semibold text-indigo-700 dark:text-indigo-300">
-                            {term.en}
-                          </td>
-                          <td className="px-3 py-2.5 text-slate-700 dark:text-slate-200">{term.ko}</td>
-                          <td className="px-3 py-2.5 text-slate-600 dark:text-slate-300">{term.effect}</td>
-                          <td className="px-3 py-2.5 font-mono text-xs text-slate-500 dark:text-slate-400">
-                            {term.usage}
-                          </td>
-                          <td className="px-3 py-2.5 text-right">
-                            <button
-                              type="button"
-                              onClick={() => togglePick(term.en)}
-                              aria-pressed={isPicked}
-                              className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-                                isPicked
-                                  ? 'bg-indigo-500 text-white'
-                                  : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/40'
-                              }`}
-                            >
-                              {isPicked ? '✓ 담김' : '＋담기'}
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                          {isPicked ? '✓' : '＋담기'}
+                        </button>
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+                        {term.effect}
+                      </p>
+                      {isOpen && (
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 pt-2 border-t border-slate-100 dark:border-slate-700/40">
+                          <span className="font-semibold text-slate-400 dark:text-slate-500">사용 예 · </span>
+                          {term.usage}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-3">
+                키워드를 누르면 사용 예가 열립니다
+              </p>
             </>
           )}
         </div>
