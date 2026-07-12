@@ -89,6 +89,49 @@ export interface LessonQuiz {
   questions: QuizQuestion[];
 }
 
+/** One part of the image-prompt anatomy formula (subject, style, lighting, ...). */
+export interface AnatomySegment {
+  key: string;
+  /** English part name, e.g. "Subject". */
+  label: string;
+  ko: string;
+  description: string;
+  /** A short example phrase for this part. */
+  example: string;
+}
+
+/** One keyword row in an image-prompt vocabulary table. */
+export interface ImageVocabTerm {
+  /** The English keyword as used in prompts, e.g. "golden hour". */
+  en: string;
+  ko: string;
+  /** What visual effect it produces (short Korean). */
+  effect: string;
+  /** A short usage example phrase. */
+  usage: string;
+}
+
+/** A themed vocabulary table (lighting, camera, composition, ...). */
+export interface ImageVocabTable {
+  key: string;
+  title: string;
+  emoji: string;
+  /** One-sentence Korean intro for the table. */
+  intro: string;
+  terms: ImageVocabTerm[];
+}
+
+/** One step in the progressive prompt-improvement example. */
+export interface ProgressiveStep {
+  title: string;
+  /** What was added at this step (Korean). */
+  addition: string;
+  /** The full prompt after this step. */
+  prompt: string;
+  /** Why this addition helps (Korean). */
+  note: string;
+}
+
 /** Library category metadata. */
 export interface Category {
   slug: string;

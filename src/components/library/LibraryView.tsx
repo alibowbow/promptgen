@@ -130,6 +130,21 @@ export const LibraryView = () => {
         </div>
       </div>
 
+      {/* Image-lab cross-link for the image category */}
+      {activeCategory === 'image-gen' && (
+        <button
+          type="button"
+          onClick={() => useViewStore.getState().setView('imagelab')}
+          className="w-full text-left rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/40 border border-indigo-200/60 dark:border-indigo-900/40 px-5 py-4 hover:border-indigo-400 transition-colors group"
+        >
+          <span className="text-sm text-slate-700 dark:text-slate-200">
+            🎨 <strong>이미지 프롬프트를 체계적으로 배우고 싶다면</strong> — 조립 공식·핵심 단어표·빌더가 있는
+            <span className="text-indigo-600 dark:text-indigo-300 font-semibold"> 이미지 랩</span>으로
+            <span aria-hidden="true" className="inline-block group-hover:translate-x-0.5 transition-transform"> →</span>
+          </span>
+        </button>
+      )}
+
       {/* Results */}
       {filtered.length === 0 ? (
         <div className="glass-card">

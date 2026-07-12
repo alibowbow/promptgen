@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type AppView = 'home' | 'learn' | 'library' | 'generate';
+export type AppView = 'home' | 'learn' | 'library' | 'imagelab' | 'generate';
 
-export const APP_VIEWS: AppView[] = ['home', 'learn', 'library', 'generate'];
+export const APP_VIEWS: AppView[] = ['home', 'learn', 'library', 'imagelab', 'generate'];
 
 export interface ViewState {
   view: AppView;

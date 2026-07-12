@@ -14,6 +14,9 @@ const LearnView = lazy(() =>
 const LibraryView = lazy(() =>
   import('./components/library/LibraryView').then((m) => ({ default: m.LibraryView }))
 );
+const ImageLabView = lazy(() =>
+  import('./components/imagelab/ImageLabView').then((m) => ({ default: m.ImageLabView }))
+);
 const GenerateView = lazy(() =>
   import('./components/generate/GenerateView').then((m) => ({ default: m.GenerateView }))
 );
@@ -93,6 +96,7 @@ export default function App() {
                 {view === 'home' && <HomeView />}
                 {view === 'learn' && <LearnView />}
                 {view === 'library' && <LibraryView />}
+                {view === 'imagelab' && <ImageLabView />}
                 {view === 'generate' && <GenerateView />}
               </Suspense>
             </main>
