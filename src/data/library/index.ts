@@ -1,6 +1,9 @@
 import type { LibraryPrompt } from '../types';
 import { prompts as fundamentals } from './fundamentals';
 import { prompts as vibeCoding } from './vibe-coding';
+import { prompts as vibeBuildBackend } from './vibe-build-backend';
+import { prompts as vibeBuildAuth } from './vibe-build-auth';
+import { prompts as vibeBuildOps } from './vibe-build-ops';
 import { prompts as softwareDev } from './software-dev';
 import { prompts as debugging } from './debugging';
 import { prompts as writing } from './writing';
@@ -19,6 +22,9 @@ import { prompts as summarize } from './summarize';
 export const LIBRARY_PROMPTS: LibraryPrompt[] = [
   ...fundamentals,
   ...vibeCoding,
+  ...vibeBuildBackend,
+  ...vibeBuildAuth,
+  ...vibeBuildOps,
   ...softwareDev,
   ...debugging,
   ...writing,
