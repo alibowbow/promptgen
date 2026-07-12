@@ -21,6 +21,12 @@ export interface LibraryPrompt {
   why: string;
   /** Optional extra usage tip. */
   tip?: string;
+  /** The template with its [placeholders] filled for one realistic scenario — ready to run. */
+  example?: string;
+  /** One sentence: why this filling works / what output to expect. */
+  exampleNote?: string;
+  /** Situational variants of the template (short label + full prompt). */
+  variations?: { label: string; prompt: string }[];
 }
 
 /** A before/after teaching example inside a lesson. */

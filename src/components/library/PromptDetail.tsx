@@ -119,6 +119,74 @@ export const PromptDetail = ({
             </pre>
           </div>
 
+          {/* Worked example: the template filled for a real scenario */}
+          {p.example && (
+            <details
+              open
+              className="rounded-xl border border-emerald-200/60 dark:border-emerald-900/40 bg-emerald-50/50 dark:bg-emerald-950/20 overflow-hidden"
+            >
+              <summary className="cursor-pointer px-4 py-3 text-xs font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-300 select-none">
+                📌 사용 예시 — 빈칸을 채우면 이렇게
+              </summary>
+              <div className="px-4 pb-4 space-y-2">
+                <pre className="whitespace-pre-wrap font-mono text-sm text-slate-700 dark:text-slate-200 bg-white/70 dark:bg-slate-900/50 border border-emerald-100 dark:border-emerald-900/30 rounded-lg p-3">
+                  {p.example}
+                </pre>
+                {p.exampleNote && (
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    💡 {p.exampleNote}
+                  </p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    copyToClipboard(p.example ?? '');
+                    success('예시 프롬프트를 복사했어요.');
+                  }}
+                  className="text-xs px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 hover:bg-emerald-200 dark:hover:bg-emerald-900/60"
+                >
+                  📋 예시 복사
+                </button>
+              </div>
+            </details>
+          )}
+
+          {/* Situational variations */}
+          {p.variations && p.variations.length > 0 && (
+            <details className="rounded-xl border border-slate-200/60 dark:border-slate-700/40 bg-slate-50/60 dark:bg-slate-900/30 overflow-hidden">
+              <summary className="cursor-pointer px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300 select-none">
+                🔀 변형 {p.variations.length}종 — 상황에 맞게 골라 쓰기
+              </summary>
+              <div className="px-4 pb-4 space-y-3">
+                {p.variations.map((v, i) => (
+                  <div
+                    key={i}
+                    className="rounded-lg border border-slate-200/70 dark:border-slate-700/50 bg-white/70 dark:bg-slate-900/50 p-3"
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-300">
+                        {v.label}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          copyToClipboard(v.prompt);
+                          success(`"${v.label}" 변형을 복사했어요.`);
+                        }}
+                        className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-100 dark:bg-cyan-900/40 text-cyan-800 dark:text-cyan-200 hover:bg-cyan-200 dark:hover:bg-cyan-900/60"
+                      >
+                        📋 복사
+                      </button>
+                    </div>
+                    <pre className="whitespace-pre-wrap font-mono text-xs text-slate-600 dark:text-slate-300">
+                      {v.prompt}
+                    </pre>
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
+
           {/* Why it works */}
           <div className="grid sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/60 dark:border-indigo-900/40 p-4">
