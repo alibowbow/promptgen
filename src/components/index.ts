@@ -10,5 +10,4 @@ export { StatusDisplay } from './StatusDisplay';
 export { ResultViewer } from './ResultViewer';
 export { ToastContainer } from './Toast';
 export { ExportImport } from './ExportImport';
-export { DarkModeToggle } from './DarkModeToggle';
 export { FloatingDrawer } from './FloatingDrawer';

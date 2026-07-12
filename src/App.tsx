@@ -1,5 +1,5 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
-import { ToastContainer, FloatingDrawer, DarkModeToggle } from './components';
+import { useEffect, lazy, Suspense } from 'react';
+import { ToastContainer, FloatingDrawer } from './components';
 import { AppNav } from './components/nav/AppNav';
 import { useViewStore, APP_VIEWS } from './stores/viewStore';
 import type { AppView } from './stores/viewStore';
@@ -67,26 +67,9 @@ export default function App() {
   const view = useViewStore((s) => s.view);
   useHashRouting();
 
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('darkMode');
-    if (saved !== null) return JSON.parse(saved);
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
-
-  useEffect(() => {
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
-
   return (
     <div className="min-h-screen transition-all duration-500">
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-950 font-sans">
-        <DarkModeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
-
         <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <div className="max-w-6xl mx-auto">
             <AppNav />
